@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>汉语学习 · HSK3</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+<style>
+:root{
+  --g50:#f0faf4;--g100:#d6f5e3;--g200:#a8e8c4;--g300:#6dd4a0;--g400:#3aba7c;--g500:#22a066;--g600:#178050;--g700:#0f5f3b;
+  --paper:#f7fbf9;--white:#fff;--ink:#1c2b24;--text:#2d4038;--sub:#6b8a78;--border:#c8e0d4;
+  --red:#e05252;--red-l:#fef0f0;--amber:#f0a030;--sky:#3b82c4;--sky-l:#eff5ff;
+  --shadow:0 4px 20px rgba(0,60,30,.10);--shadow-lg:0 8px 32px rgba(0,60,30,.14);
+  --r:999px;--r-card:24px;--r-box:18px
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Be Vietnam Pro',sans-serif;background:var(--paper);color:var(--text);min-height:100vh;overflow-x:hidden}
+header{background:linear-gradient(120deg,var(--g700),var(--g600));color:#fff;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:62px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,60,30,.20)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:38px;height:38px;background:rgba(255,255,255,.2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Noto Sans SC';font-size:18px;color:#fff;font-weight:700;border:1.5px solid rgba(255,255,255,.3)}
+.logo-text{font-size:15px;font-weight:700}
+.logo-text span{color:#a8e8c4}
+.hstats{display:flex;gap:10px;font-size:12px}
+.hstat{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.15);padding:5px 11px;border-radius:var(--r)}
+.hstat b{color:#fff;font-size:13px}
+nav.tabs{background:var(--white);border-bottom:1px solid var(--border);display:flex;padding:0 12px;position:sticky;top:62px;z-index:90;overflow-x:auto;gap:2px;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+.tab-btn{padding:12px 14px;background:none;border:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;color:var(--sub);border-bottom:3px solid transparent;transition:all .2s;margin-bottom:-1px;white-space:nowrap;display:flex;align-items:center;gap:6px;border-radius:10px 10px 0 0}
+.tab-btn:hover{color:var(--g600);background:var(--g50)}
+.tab-btn.active{color:var(--g600);border-bottom-color:var(--g500);font-weight:700;background:var(--g50)}
+main{max-width:800px;margin:0 auto;padding:24px 16px 80px}
+.panel{display:none}.panel.active{display:block}
+/* BUTTONS */
+.btn{padding:10px 22px;border-radius:var(--r);border:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;transition:all .18s;display:inline-flex;align-items:center;gap:7px}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--g500);color:#fff;box-shadow:0 2px 8px rgba(34,160,102,.30)}
+.btn-primary:hover{background:var(--g600)}
+.btn-secondary{background:var(--white);color:var(--text);border:1.5px solid var(--border)}
+.btn-secondary:hover{background:var(--g50)}
+.btn-ghost{background:var(--g100);color:var(--g700)}
+.btn-ghost:hover{background:var(--g200)}
+.btn-sky{background:var(--sky-l);color:var(--sky);border:1.5px solid #b8d4f0}
+.btn-ok{background:var(--g100);color:var(--g600);border:1.5px solid var(--g200)}
+.btn-fail{background:var(--red-l);color:var(--red);border:1.5px solid #f8c0c0}
+.btn-sm{padding:7px 16px;font-size:12px}
+/* TOGGLES */
+.tg{display:flex;background:var(--g50);border:1.5px solid var(--border);border-radius:var(--r);padding:3px;gap:2px}
+.tg-btn{padding:6px 14px;background:none;border:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;color:var(--sub);border-radius:var(--r);transition:all .18s}
+.tg-btn.on{background:var(--g500);color:#fff;box-shadow:0 2px 6px rgba(34,160,102,.25)}
+.ctrl-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:18px}
+/* FLASHCARD */
+.card-area{perspective:1400px;max-width:500px;margin:0 auto 20px}
+.card-wrap{width:100%;padding-top:60%;position:relative;cursor:pointer}
+.card-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .52s cubic-bezier(.4,0,.2,1);border-radius:var(--r-card)}
+.card-inner.flip{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;border-radius:var(--r-card);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:28px;box-shadow:var(--shadow-lg)}
+.face-front{background:linear-gradient(145deg,var(--g700),var(--g500));color:#fff}
+.face-back{background:var(--white);transform:rotateY(180deg);border:2px solid var(--g100)}
+.f-lbl{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;opacity:.55}
+.f-viet{font-size:24px;font-weight:700;text-align:center;line-height:1.3}
+.f-hint{font-size:11px;opacity:.35;margin-top:4px}
+.f-cn{font-family:'Noto Sans SC';font-size:64px;font-weight:700;color:var(--g600);line-height:1.1}
+.f-py{font-size:18px;color:var(--sky);font-weight:600;background:var(--sky-l);padding:4px 14px;border-radius:var(--r)}
+.f-sub{font-size:13px;color:var(--sub)}
+.pbar-wrap{background:var(--g100);border-radius:var(--r);height:8px;margin-bottom:6px}
+.pbar{height:8px;border-radius:var(--r);background:linear-gradient(90deg,var(--g400),var(--g300));transition:width .4s}
+/* TEST */
+.t-card{background:var(--white);border-radius:var(--r-box);padding:28px 24px;box-shadow:var(--shadow);margin-bottom:18px;text-align:center;border:1.5px solid var(--g100)}
+.t-q{font-family:'Noto Sans SC';font-size:72px;font-weight:700;color:var(--g600);line-height:1.2}
+.t-q.viet{font-family:'Be Vietnam Pro';font-size:30px;color:var(--ink);line-height:1.4}
+.t-input{width:100%;max-width:300px;padding:12px 18px;font-size:17px;border:2px solid var(--border);border-radius:var(--r);font-family:'Noto Sans SC','Be Vietnam Pro',sans-serif;outline:none;background:var(--g50);transition:all .2s;text-align:center}
+.t-input:focus{border-color:var(--g400);background:var(--white);box-shadow:0 0 0 3px rgba(58,186,124,.15)}
+.t-input.ok{border-color:var(--g400);background:var(--g100);color:var(--g700)}
+.t-input.err{border-color:var(--red);background:var(--red-l);color:var(--red)}
+.fb{margin-top:12px;padding:12px 18px;border-radius:var(--r);font-size:14px;font-weight:600;display:none}
+.fb.show{display:block}
+.fb.ok{background:var(--g100);color:var(--g700);border:1px solid var(--g200)}
+.fb.err{background:var(--red-l);color:var(--red);border:1px solid #f8c0c0}
+.score-chip{display:flex;flex-direction:column;align-items:center;background:var(--white);border-radius:var(--r-box);padding:12px 18px;box-shadow:0 1px 4px rgba(0,60,30,.07);border:1.5px solid var(--border);min-width:64px}
+.score-chip .num{font-size:28px;font-weight:800;line-height:1}
+.score-chip .lbl{font-size:10px;color:var(--sub);text-transform:uppercase;letter-spacing:.8px;margin-top:3px}
+/* JUMP */
+.jump-wrap{display:flex;align-items:center;gap:6px;background:var(--g50);border-radius:var(--r);padding:4px 8px;border:1.5px solid var(--border)}
+.jump-wrap input{width:60px;padding:5px 8px;border:1.5px solid var(--border);border-radius:var(--r);font-size:13px;font-weight:700;text-align:center;outline:none;font-family:inherit;background:var(--white)}
+.jump-wrap input:focus{border-color:var(--g400)}
+.jump-wrap span{font-size:12px;color:var(--sub)}
+/* QUICK TEST */
+.qt-overlay{display:none;position:fixed;inset:0;background:rgba(10,30,18,.72);z-index:500;align-items:center;justify-content:center;padding:16px}
+.qt-overlay.open{display:flex}
+.qt-box{background:var(--white);border-radius:28px;padding:32px 28px;width:100%;max-width:520px;box-shadow:var(--shadow-lg);text-align:center;position:relative;max-height:90vh;overflow-y:auto}
+.qt-counter{font-size:12px;color:var(--sub);font-weight:600;margin-bottom:8px}
+.qt-timer-bar{height:6px;border-radius:var(--r);background:var(--g100);overflow:hidden;margin-bottom:6px}
+.qt-timer-fill{height:100%;border-radius:var(--r);background:var(--g400)}
+.qt-timer-fill.warn{background:var(--red)}
+.qt-timer-num{font-size:13px;font-weight:700;color:var(--sub);margin-bottom:14px}
+.qt-timer-num.warn{color:var(--red)}
+.qt-lbl{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--sub);font-weight:700;margin-bottom:10px}
+.qt-word{font-size:26px;font-weight:700;color:var(--ink);line-height:1.3;min-height:80px;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+.qt-reveal{font-size:14px;color:var(--sub);min-height:22px;margin-bottom:16px}
+.qt-done{display:none;flex-direction:column;align-items:center;gap:14px}
+.qt-done.show{display:flex}
+.qt-score-big{font-size:56px;font-weight:800;color:var(--g600)}
+/* QCHIP */
+.qchip{padding:8px 20px;border-radius:var(--r);border:1.5px solid var(--border);background:var(--white);font-size:13px;font-weight:600;cursor:pointer;color:var(--sub);transition:all .15s}
+.qchip:hover,.qchip.on{background:var(--g500);color:#fff;border-color:var(--g500)}
+/* HANZI */
+.hz-overlay{display:none;position:fixed;inset:0;background:rgba(10,30,18,.65);z-index:600;align-items:center;justify-content:center;padding:16px}
+.hz-overlay.open{display:flex}
+.hz-box{background:var(--white);border-radius:24px;padding:28px 24px;width:100%;max-width:460px;box-shadow:var(--shadow-lg);text-align:center}
+.hz-chars{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:16px 0}
+.hz-char-box{width:120px;height:120px;border:2px dashed var(--g200);border-radius:14px;background:var(--g50)}
+/* VOCAB TABLE */
+.vtable{width:100%;border-collapse:collapse;background:var(--white);border-radius:var(--r-box);overflow:hidden;box-shadow:var(--shadow);border:1.5px solid var(--g100)}
+.vtable th{background:linear-gradient(90deg,var(--g700),var(--g600));color:#fff;padding:12px 14px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase}
+.vtable td{padding:11px 14px;border-bottom:1px solid var(--g50);font-size:13px;vertical-align:middle}
+.vtable tr:last-child td{border-bottom:none}
+.vtable tr:hover td{background:var(--g50)}
+.cn-cell{font-family:'Noto Sans SC';font-size:20px;font-weight:700;color:var(--g600)}
+/* STATS */
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:22px}
+.sc{background:var(--white);border-radius:var(--r-box);padding:18px;box-shadow:0 1px 4px rgba(0,60,30,.07);text-align:center;border:1.5px solid var(--g100)}
+.sc-n{font-size:36px;font-weight:800;line-height:1.1}
+.sc-l{font-size:11px;color:var(--sub);text-transform:uppercase;letter-spacing:.7px;margin-top:4px}
+.hm{background:var(--white);border-radius:var(--r-box);padding:22px;box-shadow:0 1px 4px rgba(0,60,30,.07);border:1.5px solid var(--g100)}
+.hm-grid{display:flex;flex-wrap:wrap;gap:4px;margin-top:12px}
+.hc{width:13px;height:13px;border-radius:4px}
+.hc0{background:var(--g100)}.hc1{background:var(--g200)}.hc2{background:var(--g300)}.hc3{background:var(--g500)}
+/* ADD FORM */
+.add-form{background:var(--white);border-radius:var(--r-box);padding:24px;box-shadow:var(--shadow);max-width:500px;border:1.5px solid var(--g100)}
+.form-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.fg{flex:1;min-width:130px}
+.fg label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--sub);margin-bottom:6px}
+.fg input{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:13px;outline:none;background:var(--g50)}
+.fg input:focus{border-color:var(--g400);background:var(--white)}
+.search-input{flex:1;min-width:150px;padding:9px 16px;border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:13px;outline:none;background:var(--white)}
+.search-input:focus{border-color:var(--g400)}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--ink);color:#fff;padding:12px 24px;border-radius:var(--r);font-size:13px;font-weight:500;opacity:0;transition:all .3s;z-index:999;pointer-events:none;box-shadow:var(--shadow-lg)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:600px){.f-cn{font-size:46px}.f-viet{font-size:20px}.t-q{font-size:52px}.t-q.viet{font-size:24px}.hstats{gap:6px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <div class="logo-icon">汉</div>
+    <div class="logo-text">Học <span>Tiếng Trung</span> HSK3</div>
+  </div>
+  <div class="hstats">
+    <div class="hstat">🔥<b id="hS">0</b>ngày</div>
+    <div class="hstat">✅<b id="hM">0</b>thuộc</div>
+    <div class="hstat">📚<b id="hT">0</b>từ</div>
+  </div>
+</header>
+<nav class="tabs">
+  <button class="tab-btn active" onclick="goTab('fc',this)">📚 Flashcard</button>
+  <button class="tab-btn" onclick="goTab('test',this)">✏️ Kiểm tra</button>
+  <button class="tab-btn" onclick="goTab('list',this)">📋 Từ vựng</button>
+  <button class="tab-btn" onclick="goTab('add',this)">➕ Thêm từ</button>
+  <button class="tab-btn" onclick="goTab('stats',this)">📊 Thống kê</button>
+</nav>
+<main>
+
+<!-- FLASHCARD -->
+<div id="pan-fc" class="panel active">
+  <div class="ctrl-row">
+    <div class="tg">
+      <button class="tg-btn on" id="ord-seq" onclick="setOrd('seq',this)">📋 Thứ tự</button>
+      <button class="tg-btn" id="ord-rnd" onclick="setOrd('rnd',this)">🔀 Ngẫu nhiên</button>
+    </div>
+    <div class="tg">
+      <button class="tg-btn on" id="fc-viet" onclick="setFace('viet',this)">🇻🇳 Việt→Trung</button>
+      <button class="tg-btn" id="fc-cn" onclick="setFace('cn',this)">🇨🇳 Trung→Việt</button>
+    </div>
+    <div class="tg">
+      <button class="tg-btn on" id="fl-all" onclick="setFilter('all',this)">Tất cả</button>
+      <button class="tg-btn" id="fl-new" onclick="setFilter('new',this)">Chưa học</button>
+      <button class="tg-btn" id="fl-lrn" onclick="setFilter('learning',this)">Đang học</button>
+    </div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar" id="fcPbar" style="width:0%"></div></div>
+  <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--sub);margin-bottom:14px;padding:0 2px">
+    <span id="fcPLbl">0 / 0</span><span id="fcMLbl" style="color:var(--g600);font-weight:600">0 thuộc 🎯</span>
+  </div>
+  <div style="text-align:center;font-size:12px;color:var(--sub);margin-bottom:10px" id="fcCtr">Nhấn thẻ để lật</div>
+  <div class="card-area">
+    <div class="card-wrap">
+      <div class="card-inner" id="cardInner" onclick="flipCard()">
+        <div class="face face-front">
+          <div class="f-lbl" id="frontLbl">Tiếng Việt</div>
+          <div class="f-viet" id="frontTxt">-</div>
+          <div class="f-hint">Nhấn để xem ↓</div>
+          <button id="speakBtnFront" onclick="event.stopPropagation();speakCurrentCard()" style="margin-top:4px;background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.35);color:#fff;width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">🔊</button>
+        </div>
+        <div class="face face-back">
+          <div class="f-lbl" id="backLbl">Tiếng Trung</div>
+          <div class="f-cn" id="backCn">-</div>
+          <div class="f-py" id="backPy">-</div>
+          <div class="f-sub" id="backSub"></div>
+          <button id="speakBtn" onclick="event.stopPropagation();speakCurrentCard()" style="margin-top:4px;background:var(--g100);border:1.5px solid var(--g200);color:var(--g700);width:42px;height:42px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center">🔊</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="markBtns" style="display:none;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:12px">
+    <button class="btn btn-fail btn-sm" onclick="markCard(false)">😕 Chưa thuộc</button>
+    <button class="btn btn-ok btn-sm" onclick="markCard(true)">✅ Đã thuộc</button>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;align-items:center">
+    <button class="btn btn-secondary btn-sm" onclick="prevCard()">← Trước</button>
+    <button class="btn btn-primary btn-sm" onclick="nextCard()">Tiếp theo →</button>
+    <button class="btn btn-ghost btn-sm" onclick="shuffleDeck()">🔀 Xáo bài</button>
+    <div class="jump-wrap">
+      <span>Nhảy đến #</span>
+      <input type="number" id="jumpInput" min="1" placeholder="…" onkeydown="if(event.key==='Enter')jumpTo()">
+      <button class="btn btn-ghost btn-sm" style="padding:5px 10px" onclick="jumpTo()">→</button>
+    </div>
+    <button class="btn btn-sky btn-sm" onclick="openQuickTest()">⚡ Kiểm tra nhanh</button>
+    <button class="btn btn-secondary btn-sm" onclick="showHzForCurrentCard()">✍️ Xem viết</button>
+  </div>
+</div>
+
+<!-- TEST -->
+<div id="pan-test" class="panel">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:18px">
+    <div>
+      <div style="font-size:19px;font-weight:700;color:var(--ink)">✏️ Kiểm tra từ vựng</div>
+      <div style="font-size:12px;color:var(--sub);margin-top:4px" id="testModeLbl">Nhập câu trả lời</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <div class="score-chip"><div class="num" style="color:var(--g500)" id="sc-ok">0</div><div class="lbl">Đúng</div></div>
+      <div class="score-chip"><div class="num" style="color:var(--red)" id="sc-err">0</div><div class="lbl">Sai</div></div>
+      <div class="score-chip"><div class="num" style="color:var(--sky)" id="sc-tot">0</div><div class="lbl">Tổng</div></div>
+    </div>
+  </div>
+  <div class="ctrl-row">
+    <div class="tg">
+      <button class="tg-btn on" id="td-cn2v" onclick="setTDir('cn2v',this)">🇨🇳 Trung→Việt</button>
+      <button class="tg-btn" id="td-v2cn" onclick="setTDir('v2cn',this)">🇻🇳 Việt→Pinyin</button>
+    </div>
+    <button class="btn btn-secondary btn-sm" onclick="resetTest()">🔄 Reset</button>
+  </div>
+  <div class="t-card">
+    <div style="font-size:10px;color:var(--sub);text-transform:uppercase;letter-spacing:2px;margin-bottom:16px;font-weight:700" id="tLabel">Nghĩa tiếng Việt là gì?</div>
+    <div class="t-q" id="tQ">-</div>
+    <div style="font-size:14px;color:var(--sub);margin-top:8px;min-height:20px" id="tSub"></div>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:18px">
+      <input class="t-input" id="tInput" type="text" placeholder="Nhập câu trả lời…" onkeydown="if(event.key==='Enter')checkAnswer()">
+      <button class="btn btn-primary btn-sm" onclick="checkAnswer()">Kiểm tra</button>
+    </div>
+    <div class="fb" id="fb"></div>
+    <button class="btn btn-sky btn-sm" style="margin-top:16px" onclick="nextTest()">Câu tiếp →</button>
+  </div>
+</div>
+
+<!-- QUICK TEST -->
+<div class="qt-overlay" id="qtOverlay">
+  <div class="qt-box">
+    <button onclick="closeQuickTest()" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--sub)">✕</button>
+    <!-- SETUP -->
+    <div id="qtSetup">
+      <div style="font-size:20px;font-weight:800;color:var(--ink);margin-bottom:6px">⚡ Kiểm tra nhanh</div>
+      <div style="font-size:13px;color:var(--sub);margin-bottom:20px">Mỗi thẻ tự lật kết quả rồi tự sang thẻ tiếp</div>
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--sub);margin-bottom:10px">⏱ Thời gian mỗi thẻ</div>
+      <div style="display:flex;gap:10px;justify-content:center;margin-bottom:22px">
+        <button class="qchip on" id="qt-t10" onclick="setQtTime(10,this)">10 giây</button>
+        <button class="qchip" id="qt-t20" onclick="setQtTime(20,this)">20 giây</button>
+        <button class="qchip" id="qt-t30" onclick="setQtTime(30,this)">30 giây</button>
+      </div>
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--sub);margin-bottom:8px">📚 Bộ thẻ</div>
+      <div id="qtDeckInfo" style="font-size:13px;color:var(--text);background:var(--g50);padding:10px 16px;border-radius:var(--r);margin-bottom:18px;border:1.5px solid var(--border)">-</div>
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--sub);margin-bottom:8px">🔢 Phạm vi thẻ</div>
+      <div style="display:flex;gap:8px;justify-content:center;margin-bottom:18px;align-items:center">
+        <span style="font-size:12px;color:var(--sub)">Từ #</span>
+        <input type="number" id="qtStartInput" min="1" value="1" style="width:80px;padding:9px 10px;border:1.5px solid var(--border);border-radius:var(--r);font-size:15px;font-weight:700;text-align:center;outline:none;font-family:inherit;background:var(--g50)">
+        <span style="font-size:12px;color:var(--sub)">đến #</span>
+        <input type="number" id="qtEndInput" min="1" value="593" style="width:80px;padding:9px 10px;border:1.5px solid var(--border);border-radius:var(--r);font-size:15px;font-weight:700;text-align:center;outline:none;font-family:inherit;background:var(--g50)">
+        <span style="font-size:13px;color:var(--sub)" id="qtMaxLbl">/593</span>
+      </div>
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--sub);margin-bottom:8px">🔀 Thứ tự kiểm tra</div>
+      <div style="display:flex;gap:10px;justify-content:center;margin-bottom:22px">
+        <button class="qchip on" id="qt-ord-seq" onclick="setQtOrder('seq',this)">📋 Theo thứ tự</button>
+        <button class="qchip" id="qt-ord-rnd" onclick="setQtOrder('rnd',this)">🔀 Xáo trộn</button>
+      </div>
+      <button class="btn btn-primary" style="width:100%;font-size:15px;padding:13px" onclick="startQuickTest()">▶ Bắt đầu</button>
+    </div>
+    <!-- PLAYING -->
+    <div id="qtMain" style="display:none">
+      <div class="qt-counter" id="qtCounter">1 / 20</div>
+      <div class="qt-timer-bar"><div class="qt-timer-fill" id="qtFill" style="width:100%"></div></div>
+      <div class="qt-timer-num" id="qtTimerNum">10</div>
+      <div class="qt-lbl" id="qtLbl">Chữ Hán là gì?</div>
+      <div class="qt-word" id="qtWord">-</div>
+      <div class="qt-reveal" id="qtReveal"></div>
+      <div style="display:flex;gap:6px;justify-content:center;margin-bottom:12px">
+        <button class="qchip" id="qtl-t10" onclick="setQtTimeLive(10,this)" style="padding:5px 12px;font-size:11px">10s</button>
+        <button class="qchip" id="qtl-t20" onclick="setQtTimeLive(20,this)" style="padding:5px 12px;font-size:11px">20s</button>
+        <button class="qchip" id="qtl-t30" onclick="setQtTimeLive(30,this)" style="padding:5px 12px;font-size:11px">30s</button>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-secondary btn-sm" id="qtPauseBtn" onclick="toggleQtPause()">⏸ Tạm dừng</button>
+        <button class="btn btn-secondary btn-sm" onclick="skipQtCard()">⏭ Bỏ qua</button>
+        <button class="btn btn-fail btn-sm" onclick="stopQuickTest()">⏹ Dừng hẳn</button>
+      </div>
+    </div>
+    <!-- DONE -->
+    <div class="qt-done" id="qtDone">
+      <div style="font-size:48px" id="qtDoneEmoji">🎉</div>
+      <div class="qt-score-big" id="qtScoreBig">-</div>
+      <div style="font-size:14px;color:var(--sub)" id="qtDoneMsg">Hoàn thành!</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+        <button class="btn btn-primary btn-sm" onclick="closeQuickTest()">✅ Đóng</button>
+        <button class="btn btn-ghost btn-sm" onclick="restartQuickTest()">🔄 Làm lại</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HANZI MODAL -->
+<div class="hz-overlay" id="hzOverlay" onclick="if(event.target===this)closeHzModal()">
+  <div class="hz-box">
+    <div style="font-size:18px;font-weight:700;color:var(--ink);margin-bottom:4px" id="hzTitle">Cách viết</div>
+    <div style="font-size:13px;color:var(--sub);margin-bottom:4px" id="hzSub"></div>
+    <div class="hz-chars" id="hzChars"></div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm" onclick="hzReplay()">▶ Xem lại</button>
+      <button class="btn btn-secondary btn-sm" onclick="closeHzModal()">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIST -->
+<div id="pan-list" class="panel">
+  <div class="ctrl-row">
+    <input class="search-input" type="text" placeholder="🔍 Tìm từ Việt / Hán / Pinyin…" oninput="filterList(this.value)">
+    <div class="tg">
+      <button class="tg-btn on" onclick="setSrt('id',this)">STT</button>
+      <button class="tg-btn" onclick="setSrt('status',this)">Trạng thái</button>
+    </div>
+    <button class="btn btn-secondary btn-sm" onclick="resetProg()">🔄 Reset</button>
+  </div>
+  <div style="display:flex;gap:14px;font-size:12px;color:var(--sub);margin-bottom:12px;flex-wrap:wrap">
+    <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--border);margin-right:4px"></span>Chưa học</span>
+    <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--amber);margin-right:4px"></span>Đang học</span>
+    <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--g500);margin-right:4px"></span>Đã thuộc</span>
+  </div>
+  <table class="vtable"><thead><tr><th>#</th><th>Tiếng Việt</th><th>Chữ Trung</th><th>Pinyin</th><th>Tiến độ</th></tr></thead>
+  <tbody id="vtBody"></tbody></table>
+</div>
+
+<!-- ADD -->
+<div id="pan-add" class="panel">
+  <h2 style="font-size:18px;margin-bottom:18px;color:var(--ink)">➕ Thêm từ vựng</h2>
+  <div class="add-form">
+    <div class="form-row">
+      <div class="fg"><label>Tiếng Việt *</label><input id="av" placeholder="xin chào"></div>
+      <div class="fg"><label>Chữ Trung *</label><input id="ac" placeholder="你好" style="font-family:'Noto Sans SC'"></div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Pinyin *</label><input id="ap" placeholder="nǐ hǎo"></div>
+      <div class="fg"><label>Ghi chú</label><input id="an" placeholder="tuỳ chọn"></div>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="addWord()">✅ Thêm từ</button>
+  </div>
+  <div style="margin-top:24px">
+    <h3 style="font-size:14px;margin-bottom:10px;color:var(--sub);font-weight:600">Nhập nhiều từ (mỗi dòng: Việt | 汉字 | pīnyīn)</h3>
+    <textarea id="bulk" style="width:100%;height:130px;padding:12px 16px;border:1.5px solid var(--border);border-radius:18px;font-family:inherit;font-size:13px;resize:vertical;background:var(--g50);outline:none" placeholder="xin chào | 你好 | nǐ hǎo"></textarea>
+    <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="bulkAdd()">📥 Nhập tất cả</button>
+  </div>
+</div>
+
+<!-- STATS -->
+<div id="pan-stats" class="panel">
+  <h2 style="font-size:18px;margin-bottom:18px;color:var(--ink)">📊 Thống kê</h2>
+  <div class="sg">
+    <div class="sc"><div class="sc-n" style="color:var(--ink)" id="stTot">0</div><div class="sc-l">Tổng từ</div></div>
+    <div class="sc"><div class="sc-n" style="color:var(--g500)" id="stMas">0</div><div class="sc-l">Đã thuộc</div></div>
+    <div class="sc"><div class="sc-n" style="color:var(--amber)" id="stLrn">0</div><div class="sc-l">Đang học</div></div>
+    <div class="sc"><div class="sc-n" style="color:var(--red)" id="stStr">0</div><div class="sc-l">Ngày 🔥</div></div>
+    <div class="sc"><div class="sc-n" style="color:var(--sky)" id="stSes">0</div><div class="sc-l">Lượt KT</div></div>
+    <div class="sc"><div class="sc-n" style="color:var(--g600)" id="stAcc">0%</div><div class="sc-l">Chính xác</div></div>
+  </div>
+  <div class="hm"><h3 style="font-size:14px;font-weight:600;color:var(--ink)">Hoạt động 30 ngày</h3><div class="hm-grid" id="hmGrid"></div></div>
+</div>
+
+</main>
+<div id="toast"></div>
+<script>
+// ── DATA ──────────────────────────────────────────────────
+const WORDS_RAW=[{"id":1,"viet":"tám","cn":"八","pinyin":"bā"},{"id":2,"viet":"bố","cn":"爸爸","pinyin":"bàba"},{"id":3,"viet":"cốc","cn":"杯子","pinyin":"bēizi"},{"id":4,"viet":"Bắc Kinh","cn":"北京","pinyin":"Běijīng"},{"id":5,"viet":"quyển (dùng cho sách)","cn":"本","pinyin":"běn"},{"id":6,"viet":"không có gì \n(đáp lại lời cảm ơn)","cn":"不客气","pinyin":"bù kèqi"},{"id":7,"viet":"không","cn":"不","pinyin":"bù"},{"id":8,"viet":"món ăn, rau củ","cn":"菜","pinyin":"cài"},{"id":9,"viet":"trà","cn":"茶","pinyin":"chá"},{"id":10,"viet":"ăn","cn":"吃","pinyin":"chī"},{"id":11,"viet":"taxi","cn":"出租车","pinyin":"chūzūchē"},{"id":12,"viet":"gọi điện thoại","cn":"打电话","pinyin":"dǎ diànhuà"},{"id":13,"viet":"lớn, to","cn":"大","pinyin":"dà"},{"id":14,"viet":"của (thuộc tính)","cn":"的","pinyin":"de"},{"id":15,"viet":"giờ (trong thời gian)","cn":"点","pinyin":"diǎn"},{"id":16,"viet":"máy tính","cn":"电脑","pinyin":"diànnǎo"},{"id":17,"viet":"ti vi","cn":"电视","pinyin":"diànshì"},{"id":18,"viet":"phim","cn":"电影","pinyin":"diànyǐng"},{"id":19,"viet":"đồ vật, thứ","cn":"东西","pinyin":"dōngxi"},{"id":20,"viet":"đều","cn":"都","pinyin":"dōu"},{"id":21,"viet":"đọc","cn":"读","pinyin":"dú"},{"id":22,"viet":"xin lỗi","cn":"对不起","pinyin":"duìbuqǐ"},{"id":23,"viet":"nhiều","cn":"多","pinyin":"duō"},{"id":24,"viet":"bao nhiêu","cn":"多少","pinyin":"duōshao"},{"id":25,"viet":"con trai","cn":"儿子","pinyin":"érzi"},{"id":26,"viet":"hai","cn":"二","pinyin":"èr"},{"id":27,"viet":"nhà hàng","cn":"饭馆","pinyin":"fànguǎn"},{"id":28,"viet":"máy bay","cn":"飞机","pinyin":"fēijī"},{"id":29,"viet":"phút","cn":"分钟","pinyin":"fēnzhōng"},{"id":30,"viet":"vui","cn":"高兴","pinyin":"gāoxìng"},{"id":31,"viet":"cái (đơn vị lượng từ)","cn":"个","pinyin":"gè"},{"id":32,"viet":"công việc","cn":"工作","pinyin":"gōngzuò"},{"id":33,"viet":"chó","cn":"狗","pinyin":"gǒu"},{"id":34,"viet":"tiếng Hán","cn":"汉语","pinyin":"Hànyǔ"},{"id":35,"viet":"tốt, khỏe","cn":"好","pinyin":"hǎo"},{"id":36,"viet":"uống","cn":"喝","pinyin":"hē"},{"id":37,"viet":"và","cn":"和","pinyin":"hé"},{"id":38,"viet":"rất","cn":"很","pinyin":"hěn"},{"id":39,"viet":"phía sau","cn":"后面","pinyin":"hòumian"},{"id":40,"viet":"quay lại, về","cn":"回","pinyin":"huí"},{"id":41,"viet":"sẽ, biết (kỹ năng)","cn":"会","pinyin":"huì"},{"id":42,"viet":"ga tàu","cn":"火车站","pinyin":"huǒchēzhàn"},{"id":43,"viet":"mấy","cn":"几","pinyin":"jǐ"},{"id":44,"viet":"gia đình, nhà","cn":"家","pinyin":"jiā"},{"id":45,"viet":"gọi, tên gọi","cn":"叫","pinyin":"jiào"},{"id":46,"viet":"hôm nay","cn":"今天","pinyin":"jīntiān"},{"id":47,"viet":"chín","cn":"九","pinyin":"jiǔ"},{"id":48,"viet":"mở, khởi động","cn":"开","pinyin":"kāi"},{"id":49,"viet":"xem","cn":"看","pinyin":"kàn"},{"id":50,"viet":"nhìn thấy","cn":"看见","pinyin":"kànjiàn"},{"id":51,"viet":"miếng, đồng (tiền)","cn":"块","pinyin":"kuài"},{"id":52,"viet":"đến","cn":"来","pinyin":"lái"},{"id":53,"viet":"giáo viên","cn":"老师","pinyin":"lǎoshī"},{"id":54,"viet":"đã \n(dùng để chỉ sự thay đổi)","cn":"了","pinyin":"le"},{"id":55,"viet":"lạnh","cn":"冷","pinyin":"lěng"},{"id":56,"viet":"trong","cn":"里","pinyin":"lǐ"},{"id":57,"viet":"không (số 0)","cn":"零","pinyin":"líng"},{"id":58,"viet":"sáu","cn":"六","pinyin":"liù"},{"id":59,"viet":"mẹ","cn":"妈妈","pinyin":"māma"},{"id":60,"viet":"không \n(dùng trong câu hỏi)","cn":"吗","pinyin":"ma"},{"id":61,"viet":"mua","cn":"买","pinyin":"mǎi"},{"id":62,"viet":"mèo","cn":"猫","pinyin":"māo"},{"id":63,"viet":"không có, chưa","cn":"没","pinyin":"méi"},{"id":64,"viet":"không sao, không có gì","cn":"没关系","pinyin":"méi guānxi"},{"id":65,"viet":"cơm","cn":"米饭","pinyin":"mǐfàn"},{"id":66,"viet":"ngày mai","cn":"明天","pinyin":"míngtiān"},{"id":67,"viet":"tên","cn":"名字","pinyin":"míngzi"},{"id":68,"viet":"đâu, chỗ nào","cn":"哪里/哪儿","pinyin":"nǎlǐ/nǎr"},{"id":69,"viet":"đó, kia","cn":"那","pinyin":"nà"},{"id":70,"viet":"thì sao? \n(dùng để hỏi thêm)","cn":"呢","pinyin":"ne"},{"id":71,"viet":"có thể","cn":"能","pinyin":"néng"},{"id":72,"viet":"bạn","cn":"你","pinyin":"nǐ"},{"id":73,"viet":"năm","cn":"年","pinyin":"nián"},{"id":74,"viet":"con gái","cn":"女儿","pinyin":"nǚ'ér"},{"id":75,"viet":"bạn","cn":"朋友","pinyin":"péngyou"},{"id":76,"viet":"đẹp","cn":"漂亮","pinyin":"piàoliang"},{"id":77,"viet":"táo","cn":"苹果","pinyin":"píngguǒ"},{"id":78,"viet":"bảy","cn":"七","pinyin":"qī"},{"id":79,"viet":"tiền","cn":"钱","pinyin":"qián"},{"id":80,"viet":"phía trước","cn":"前面","pinyin":"qiánmian"},{"id":81,"viet":"xin vui lòng, mời","cn":"请","pinyin":"qǐng"},{"id":82,"viet":"đi","cn":"去","pinyin":"qù"},{"id":83,"viet":"nóng","cn":"热","pinyin":"rè"},{"id":84,"viet":"người","cn":"人","pinyin":"rén"},{"id":85,"viet":"quen biết","cn":"认识","pinyin":"rènshi"},{"id":86,"viet":"ngày","cn":"日","pinyin":"rì"},{"id":87,"viet":"ba","cn":"三","pinyin":"sān"},{"id":88,"viet":"cửa hàng","cn":"商店","pinyin":"shāngdiàn"},{"id":89,"viet":"lên","cn":"上","pinyin":"shàng"},{"id":90,"viet":"buổi sáng","cn":"上午","pinyin":"shàngwǔ"},{"id":91,"viet":"ít","cn":"少","pinyin":"shǎo"},{"id":92,"viet":"ai","cn":"谁","pinyin":"shuí"},{"id":93,"viet":"cái gì","cn":"什么","pinyin":"shénme"},{"id":94,"viet":"mười","cn":"十","pinyin":"shí"},{"id":95,"viet":"lúc, khi","cn":"时候","pinyin":"shíhou"},{"id":96,"viet":"là, thì","cn":"是","pinyin":"shì"},{"id":97,"viet":"sách","cn":"书","pinyin":"shū"},{"id":98,"viet":"nước","cn":"水","pinyin":"shuǐ"},{"id":99,"viet":"trái cây","cn":"水果","pinyin":"shuǐguǒ"},{"id":100,"viet":"ngủ","cn":"睡觉","pinyin":"shuìjiào"},{"id":101,"viet":"nói chuyện","cn":"说话","pinyin":"shuōhuà"},{"id":102,"viet":"bốn","cn":"四","pinyin":"sì"},{"id":103,"viet":"tuổi","cn":"岁","pinyin":"suì"},{"id":104,"viet":"anh ấy, ông ấy","cn":"他","pinyin":"tā"},{"id":105,"viet":"cô ấy, bà ấy","cn":"她","pinyin":"tā"},{"id":106,"viet":"quá","cn":"太","pinyin":"tài"},{"id":107,"viet":"thời tiết","cn":"天气","pinyin":"tiānqì"},{"id":108,"viet":"nghe","cn":"听","pinyin":"tīng"},{"id":109,"viet":"bạn học","cn":"同学","pinyin":"tóngxué"},{"id":110,"viet":"alo","cn":"喂","pinyin":"wèi"},{"id":111,"viet":"tôi","cn":"我","pinyin":"wǒ"},{"id":112,"viet":"chúng tôi","cn":"我们","pinyin":"wǒmen"},{"id":113,"viet":"năm","cn":"五","pinyin":"wǔ"},{"id":114,"viet":"thích","cn":"喜欢","pinyin":"xǐhuan"},{"id":115,"viet":"xuống","cn":"下","pinyin":"xià"},{"id":116,"viet":"buổi chiều","cn":"下午","pinyin":"xiàwǔ"},{"id":117,"viet":"mưa","cn":"下雨","pinyin":"xià yǔ"},{"id":118,"viet":"ông, ngài","cn":"先生","pinyin":"xiānsheng"},{"id":119,"viet":"bây giờ","cn":"现在","pinyin":"xiànzài"},{"id":120,"viet":"nghĩ, muốn","cn":"想","pinyin":"xiǎng"},{"id":121,"viet":"nhỏ","cn":"小","pinyin":"xiǎo"},{"id":122,"viet":"cô (trong cách gọi)","cn":"小姐","pinyin":"xiǎojiě"},{"id":123,"viet":"vài","cn":"些","pinyin":"xiē"},{"id":124,"viet":"viết","cn":"写","pinyin":"xiě"},{"id":125,"viet":"cảm ơn","cn":"谢谢","pinyin":"xièxie"},{"id":126,"viet":"tuần","cn":"星期","pinyin":"xīngqī"},{"id":127,"viet":"học sinh","cn":"学生","pinyin":"xuésheng"},{"id":128,"viet":"học tập","cn":"学习","pinyin":"xuéxí"},{"id":129,"viet":"trường học","cn":"学校","pinyin":"xuéxiào"},{"id":130,"viet":"một","cn":"一","pinyin":"yī"},{"id":131,"viet":"quần áo","cn":"衣服","pinyin":"yīfu"},{"id":132,"viet":"bác sĩ","cn":"医生","pinyin":"yīshēng"},{"id":133,"viet":"bệnh viện","cn":"医院","pinyin":"yīyuàn"},{"id":134,"viet":"ghế","cn":"椅子","pinyin":"yǐzi"},{"id":135,"viet":"tháng, mặt trăng","cn":"月","pinyin":"yuè"},{"id":136,"viet":"ở, tại","cn":"在","pinyin":"zài"},{"id":137,"viet":"tạm biệt","cn":"再见","pinyin":"zàijiàn"},{"id":138,"viet":"làm sao","cn":"怎么","pinyin":"zěnme"},{"id":139,"viet":"như thế nào","cn":"怎么样","pinyin":"zěnmeyàng"},{"id":140,"viet":"Đây, này","cn":"这","pinyin":"zhè"},{"id":141,"viet":"Trung Quốc","cn":"中国","pinyin":"Zhōngguó"},{"id":142,"viet":"buổi trưa","cn":"中午","pinyin":"zhōngwǔ"},{"id":143,"viet":"sống, cư trú","cn":"住","pinyin":"zhù"},{"id":144,"viet":"bàn","cn":"桌子","pinyin":"zhuōzi"},{"id":145,"viet":"chữ","cn":"字","pinyin":"zì"},{"id":146,"viet":"hôm qua","cn":"昨天","pinyin":"zuótiān"},{"id":147,"viet":"ngồi","cn":"坐","pinyin":"zuò"},{"id":148,"viet":"làm","cn":"做","pinyin":"zuò"},{"id":149,"viet":"đi, nhé, nhỉ (đứng cuối câu)","cn":"吧","pinyin":"ba"},{"id":150,"viet":"trắng","cn":"白","pinyin":"bái"},{"id":151,"viet":"trăm","cn":"百","pinyin":"bǎi"},{"id":152,"viet":"giúp đỡ","cn":"帮助","pinyin":"bāngzhù"},{"id":153,"viet":"báo","cn":"报纸","pinyin":"bàozhǐ"},{"id":154,"viet":"so sánh","cn":"比","pinyin":"bǐ"},{"id":155,"viet":"đừng, khác biệt","cn":"别","pinyin":"bié"},{"id":156,"viet":"dài","cn":"长","pinyin":"zhǎng"},{"id":157,"viet":"hát","cn":"唱歌","pinyin":"chàng gē"},{"id":158,"viet":"ra ngoài","cn":"出","pinyin":"chū"},{"id":159,"viet":"mặc","cn":"穿","pinyin":"chuān"},{"id":160,"viet":"thuyền","cn":"船","pinyin":"chuán"},{"id":161,"viet":"lần","cn":"次","pinyin":"cì"},{"id":162,"viet":"từ, theo","cn":"从","pinyin":"cóng"},{"id":163,"viet":"sai","cn":"错","pinyin":"cuò"},{"id":164,"viet":"chơi bóng rổ","cn":"打篮球","pinyin":"dǎ lánqiú"},{"id":165,"viet":"mọi người","cn":"大家","pinyin":"dàjiā"},{"id":166,"viet":"nhưng","cn":"但是","pinyin":"dànshì"},{"id":167,"viet":"đến","cn":"到","pinyin":"dào"},{"id":168,"viet":"phải, đạt được","cn":"得","pinyin":"de/dé"},{"id":169,"viet":"đợi","cn":"等","pinyin":"děng"},{"id":170,"viet":"em trai","cn":"弟弟","pinyin":"dìdi"},{"id":171,"viet":"đầu tiên","cn":"第一","pinyin":"dìyī"},{"id":172,"viet":"hiểu","cn":"懂","pinyin":"dǒng"},{"id":173,"viet":"đúng, đối với","cn":"对","pinyin":"duì"},{"id":174,"viet":"phòng","cn":"房间","pinyin":"fángjiān"},{"id":175,"viet":"rất, cực kỳ","cn":"非常","pinyin":"fēicháng"},{"id":176,"viet":"nhân viên phục vụ","cn":"服务员","pinyin":"fúwùyuán"},{"id":177,"viet":"cao","cn":"高","pinyin":"gāo"},{"id":178,"viet":"nói cho, thông báo","cn":"告诉","pinyin":"gàosu"},{"id":179,"viet":"anh trai","cn":"哥哥","pinyin":"gēge"},{"id":180,"viet":"đưa cho, cho","cn":"给","pinyin":"gěi"},{"id":181,"viet":"xe buýt","cn":"公共汽车","pinyin":"gōnggòng qìchē"},{"id":182,"viet":"kilogram (kg)","cn":"公斤","pinyin":"gōngjīn"},{"id":183,"viet":"công ty","cn":"公司","pinyin":"gōngsī"},{"id":184,"viet":"đắt, quý","cn":"贵","pinyin":"guì"},{"id":185,"viet":"qua, đi qua","cn":"过","pinyin":"guò"},{"id":186,"viet":"vẫn, còn","cn":"还","pinyin":"hái"},{"id":187,"viet":"trẻ con","cn":"孩子","pinyin":"háizi"},{"id":188,"viet":"ngon","cn":"好吃","pinyin":"hǎochī"},{"id":189,"viet":"số (như số điện thoại, số nhà)","cn":"号","pinyin":"hào"},{"id":190,"viet":"đen","cn":"黑","pinyin":"hēi"},{"id":191,"viet":"đỏ","cn":"红","pinyin":"hóng"},{"id":192,"viet":"hoan nghênh, chào mừng","cn":"欢迎","pinyin":"huānyíng"},{"id":193,"viet":"trả lời","cn":"回答","pinyin":"huídá"},{"id":194,"viet":"sân bay","cn":"机场","pinyin":"jīchǎng"},{"id":195,"viet":"trứng gà","cn":"鸡蛋","pinyin":"jīdàn"},{"id":196,"viet":"cái (dùng cho sự việc, quần áo)","cn":"件","pinyin":"jiàn"},{"id":197,"viet":"lớp học","cn":"教室","pinyin":"jiàoshì"},{"id":198,"viet":"chị gái","cn":"姐姐","pinyin":"jiějie"},{"id":199,"viet":"giới thiệu","cn":"介绍","pinyin":"jièshào"},{"id":200,"viet":"vào","cn":"进","pinyin":"jìn"},{"id":201,"viet":"gần","cn":"近","pinyin":"jìn"},{"id":202,"viet":"thì, ngay","cn":"就","pinyin":"jiù"},{"id":203,"viet":"cảm thấy","cn":"觉得","pinyin":"juéde"},{"id":204,"viet":"cà phê","cn":"咖啡","pinyin":"kāfēi"},{"id":205,"viet":"bắt đầu","cn":"开始","pinyin":"kāishǐ"},{"id":206,"viet":"thi","cn":"考试","pinyin":"kǎoshì"},{"id":207,"viet":"có thể","cn":"可能","pinyin":"kěnéng"},{"id":208,"viet":"có thể","cn":"可以","pinyin":"kěyǐ"},{"id":209,"viet":"bài học","cn":"课","pinyin":"kè"},{"id":210,"viet":"nhanh","cn":"快","pinyin":"kuài"},{"id":211,"viet":"vui vẻ","cn":"快乐","pinyin":"kuàilè"},{"id":212,"viet":"mệt","cn":"累","pinyin":"lèi"},{"id":213,"viet":"cách (khoảng cách), rời","cn":"离","pinyin":"lí"},{"id":214,"viet":"hai (khi đếm số lượng)","cn":"两","pinyin":"liǎng"},{"id":215,"viet":"đường","cn":"路","pinyin":"lù"},{"id":216,"viet":"du lịch","cn":"旅游","pinyin":"lǚyóu"},{"id":217,"viet":"bán","cn":"卖","pinyin":"mài"},{"id":218,"viet":"chậm","cn":"慢","pinyin":"màn"},{"id":219,"viet":"bận","cn":"忙","pinyin":"máng"},{"id":220,"viet":"mỗi","cn":"每","pinyin":"měi"},{"id":221,"viet":"em gái","cn":"妹妹","pinyin":"mèimei"},{"id":222,"viet":"cửa","cn":"门","pinyin":"mén"},{"id":223,"viet":"đàn ông","cn":"男人","pinyin":"nánrén"},{"id":224,"viet":"bạn (dùng lịch sự)","cn":"您","pinyin":"nín"},{"id":225,"viet":"sữa bò","cn":"牛奶","pinyin":"niúnǎi"},{"id":226,"viet":"phụ nữ","cn":"女人","pinyin":"nǚrén"},{"id":227,"viet":"bên cạnh","cn":"旁边","pinyin":"pángbiān"},{"id":228,"viet":"chạy bộ","cn":"跑步","pinyin":"pǎo bù"},{"id":229,"viet":"rẻ","cn":"便宜","pinyin":"piányí"},{"id":230,"viet":"vé","cn":"票","pinyin":"piào"},{"id":231,"viet":"vợ","cn":"妻子","pinyin":"qīzi"},{"id":232,"viet":"dậy (rời khỏi giường)","cn":"起床","pinyin":"qǐ chuáng"},{"id":233,"viet":"nghìn","cn":"千","pinyin":"qiān"},{"id":234,"viet":"nắng, quang đãng","cn":"晴","pinyin":"qíng"},{"id":235,"viet":"năm ngoái","cn":"去年","pinyin":"qùnián"},{"id":236,"viet":"để, làm cho, nhường","cn":"让","pinyin":"ràng"},{"id":237,"viet":"đi làm","cn":"上班","pinyin":"shàng bān"},{"id":238,"viet":"cơ thể","cn":"身体","pinyin":"shēntǐ"},{"id":239,"viet":"bị bệnh","cn":"生病","pinyin":"shēng bìng"},{"id":240,"viet":"sinh nhật","cn":"生日","pinyin":"shēngrì"},{"id":241,"viet":"thời gian","cn":"时间","pinyin":"shíjiān"},{"id":242,"viet":"việc","cn":"事情","pinyin":"shìqing"},{"id":243,"viet":"đồng hồ","cn":"手表","pinyin":"shǒubiǎo"},{"id":244,"viet":"điện thoại di động","cn":"手机","pinyin":"shǒujī"},{"id":245,"viet":"tặng","cn":"送","pinyin":"sòng"},{"id":246,"viet":"vì vậy","cn":"所以","pinyin":"suǒyǐ"},{"id":247,"viet":"nó (cho vật, động vật)","cn":"它","pinyin":"tā"},{"id":248,"viet":"đá bóng","cn":"踢足球","pinyin":"tī zúqiú"},{"id":249,"viet":"câu hỏi, đề bài","cn":"题","pinyin":"tí"},{"id":250,"viet":"nhảy múa","cn":"跳舞","pinyin":"tiào wǔ"},{"id":251,"viet":"ngoài","cn":"外","pinyin":"wài"},{"id":252,"viet":"chơi","cn":"玩","pinyin":"wán"},{"id":253,"viet":"xong, hoàn thành","cn":"完","pinyin":"wán"},{"id":254,"viet":"buổi tối","cn":"晚上","pinyin":"wǎnshang"},{"id":255,"viet":"tại sao","cn":"为什么","pinyin":"wèi shénme"},{"id":256,"viet":"hỏi","cn":"问","pinyin":"wèn"},{"id":257,"viet":"vấn đề","cn":"问题","pinyin":"wèntí"},{"id":258,"viet":"dưa hấu","cn":"西瓜","pinyin":"xīguā"},{"id":259,"viet":"hy vọng","cn":"希望","pinyin":"xīwàng"},{"id":260,"viet":"rửa","cn":"洗","pinyin":"xǐ"},{"id":261,"viet":"hướng về, đối với","cn":"向","pinyin":"xiàng"},{"id":262,"viet":"tiếng đồng hồ","cn":"小时","pinyin":"xiǎoshí"},{"id":263,"viet":"cười","cn":"笑","pinyin":"xiào"},{"id":264,"viet":"mới","cn":"新","pinyin":"xīn"},{"id":265,"viet":"họ","cn":"姓","pinyin":"xìng"},{"id":266,"viet":"nghỉ ngơi","cn":"休息","pinyin":"xiūxi"},{"id":267,"viet":"tuyết","cn":"雪","pinyin":"xuě"},{"id":268,"viet":"màu sắc","cn":"颜色","pinyin":"yánsè"},{"id":269,"viet":"mắt","cn":"眼睛","pinyin":"yǎnjing"},{"id":270,"viet":"thịt cừu","cn":"羊肉","pinyin":"yángròu"},{"id":271,"viet":"muốn, cần","cn":"要","pinyin":"yào"},{"id":272,"viet":"thuốc","cn":"药","pinyin":"yào"},{"id":273,"viet":"cũng","cn":"也","pinyin":"yě"},{"id":274,"viet":"đã","cn":"已经","pinyin":"yǐjīng"},{"id":275,"viet":"cùng nhau","cn":"一起","pinyin":"yīqǐ"},{"id":276,"viet":"ý nghĩa","cn":"意思","pinyin":"yìsi"},{"id":277,"viet":"âm u, trời nhiều mây","cn":"阴","pinyin":"yīn"},{"id":278,"viet":"vì","cn":"因为","pinyin":"yīnwèi"},{"id":279,"viet":"bơi","cn":"游泳","pinyin":"yóuyǒng"},{"id":280,"viet":"bên phải","cn":"右边","pinyin":"yòubian"},{"id":281,"viet":"cá","cn":"鱼","pinyin":"yú"},{"id":282,"viet":"Đồng (đơn vị tiền tệ)","cn":"元","pinyin":"yuán"},{"id":283,"viet":"xa","cn":"远","pinyin":"yuǎn"},{"id":284,"viet":"vận động","cn":"运动","pinyin":"yùndòng"},{"id":285,"viet":"lại","cn":"再","pinyin":"zài"},{"id":286,"viet":"buổi sáng sớm","cn":"早上","pinyin":"zǎoshang"},{"id":287,"viet":"tờ, bức (dùng cho vật phẳng)","cn":"张","pinyin":"zhāng"},{"id":288,"viet":"chồng","cn":"丈夫","pinyin":"zhàngfu"},{"id":289,"viet":"tìm","cn":"找","pinyin":"zhǎo"},{"id":290,"viet":"đang (chỉ trạng thái hiện tại)","cn":"着","pinyin":"zhe"},{"id":291,"viet":"thật","cn":"真","pinyin":"zhēn"},{"id":292,"viet":"đang","cn":"正在","pinyin":"zhèngzài"},{"id":293,"viet":"biết","cn":"知道","pinyin":"zhīdào"},{"id":294,"viet":"chuẩn bị","cn":"准备","pinyin":"zhǔnbèi"},{"id":295,"viet":"xe đạp","cn":"自行车","pinyin":"zìxíngchē"},{"id":296,"viet":"đi","cn":"走","pinyin":"zǒu"},{"id":297,"viet":"nhất (so sánh nhất)","cn":"最","pinyin":"zuì"},{"id":298,"viet":"bên trái","cn":"左边","pinyin":"zuǒbian"},{"id":299,"viet":"dì, cô (cách gọi)","cn":"阿姨","pinyin":"āyí"},{"id":300,"viet":"a, à, ơ (trợ từ ngữ khí)","cn":"啊","pinyin":"a"},{"id":301,"viet":"thấp, lùn","cn":"矮","pinyin":"ǎi"},{"id":302,"viet":"sở thích","cn":"爱好","pinyin":"àihào"},{"id":303,"viet":"yên tĩnh","cn":"安静","pinyin":"ānjìng"},{"id":304,"viet":"đem, lấy (giới từ)","cn":"把","pinyin":"bǎ"},{"id":305,"viet":"lớp, ca (làm việc)","cn":"班","pinyin":"bān"},{"id":306,"viet":"chuyển, dời","cn":"搬","pinyin":"bān"},{"id":307,"viet":"một nửa","cn":"半","pinyin":"bàn"},{"id":308,"viet":"biện pháp","cn":"办法","pinyin":"bànfǎ"},{"id":309,"viet":"văn phòng","cn":"办公室","pinyin":"bàngōngshì"},{"id":310,"viet":"giúp đỡ (động từ li hợp)","cn":"帮忙","pinyin":"bāng máng"},{"id":311,"viet":"túi, bao","cn":"包","pinyin":"bāo"},{"id":312,"viet":"no","cn":"饱","pinyin":"bǎo"},{"id":313,"viet":"miền Bắc","cn":"北方","pinyin":"běifāng"},{"id":314,"viet":"bị, được (giới từ bị động)","cn":"被","pinyin":"bèi"},{"id":315,"viet":"khá, tương đối","cn":"比较","pinyin":"bǐjiào"},{"id":316,"viet":"cuộc thi, thi đấu","cn":"比赛","pinyin":"bǐsài"},{"id":317,"viet":"phải, cần phải","cn":"必须","pinyin":"bìxū"},{"id":318,"viet":"thay đổi","cn":"变化","pinyin":"biànhuà"},{"id":319,"viet":"biểu thị, thể hiện","cn":"表示","pinyin":"biǎoshì"},{"id":320,"viet":"biểu diễn","cn":"表演","pinyin":"biǎoyǎn"},{"id":321,"viet":"người khác","cn":"别人","pinyin":"biérén"},{"id":322,"viet":"khách sạn","cn":"宾馆","pinyin":"bīnguǎn"},{"id":323,"viet":"tủ lạnh","cn":"冰箱","pinyin":"bīngxiāng"},{"id":324,"viet":"mới (nhấn mạnh thời gian muộn)","cn":"才","pinyin":"cái"},{"id":325,"viet":"thực đơn","cn":"菜单","pinyin":"càidān"},{"id":326,"viet":"tham gia","cn":"参加","pinyin":"cānjiā"},{"id":327,"viet":"cỏ","cn":"草","pinyin":"cǎo"},{"id":328,"viet":"tầng","cn":"层","pinyin":"céng"},{"id":329,"viet":"kém, thiếu, tệ","cn":"差","pinyin":"chà"},{"id":330,"viet":"siêu thị","cn":"超市","pinyin":"chāoshì"},{"id":331,"viet":"áo sơ mi","cn":"衬衫","pinyin":"chènshān"},{"id":332,"viet":"thành tích","cn":"成绩","pinyin":"chéngjì"},{"id":333,"viet":"thành phố","cn":"城市","pinyin":"chéngshì"},{"id":334,"viet":"đến trễ","cn":"迟到","pinyin":"chídào"},{"id":335,"viet":"xuất hiện","cn":"出现","pinyin":"chūxiàn"},{"id":336,"viet":"nhà bếp","cn":"厨房","pinyin":"chúfáng"},{"id":337,"viet":"ngoài ra, trừ ra","cn":"除了","pinyin":"chúle"},{"id":338,"viet":"mùa xuân","cn":"春","pinyin":"chūn"},{"id":339,"viet":"từ ngữ","cn":"词语","pinyin":"cíyǔ"},{"id":340,"viet":"thông minh","cn":"聪明","pinyin":"cōngming"},{"id":341,"viet":"quét dọn","cn":"打扫","pinyin":"dǎsǎo"},{"id":342,"viet":"dự định","cn":"打算","pinyin":"dǎsuàn"},{"id":343,"viet":"mang theo, dẫn theo","cn":"带","pinyin":"dài"},{"id":344,"viet":"lo lắng","cn":"担心","pinyin":"dānxīn"},{"id":345,"viet":"bánh ngọt","cn":"蛋糕","pinyin":"dàngāo"},{"id":346,"viet":"đương nhiên","cn":"当然","pinyin":"dāngrán"},{"id":347,"viet":"trợ từ của động từ","cn":"地","pinyin":"de"},{"id":348,"viet":"đèn","cn":"灯","pinyin":"dēng"},{"id":349,"viet":"thấp","cn":"低","pinyin":"dī"},{"id":350,"viet":"nơi, chỗ","cn":"地方","pinyin":"dìfang"},{"id":351,"viet":"tàu điện ngầm","cn":"地铁","pinyin":"dìtiě"},{"id":352,"viet":"bản đồ","cn":"地图","pinyin":"dìtú"},{"id":353,"viet":"thang máy","cn":"电梯","pinyin":"diàntī"},{"id":354,"viet":"hộp thư điện tử (email)","cn":"电子邮箱","pinyin":"diànzǐ yóuxiāng"},{"id":355,"viet":"đông (hướng đông)","cn":"东","pinyin":"dōng"},{"id":356,"viet":"mùa đông","cn":"冬","pinyin":"dōng"},{"id":357,"viet":"động vật","cn":"动物","pinyin":"dòngwù"},{"id":358,"viet":"ngắn","cn":"短","pinyin":"duǎn"},{"id":359,"viet":"đoạn, quãng","cn":"段","pinyin":"duàn"},{"id":360,"viet":"luyện tập, rèn luyện","cn":"锻炼","pinyin":"duànliàn"},{"id":361,"viet":"bao nhiêu, biết bao","cn":"多么","pinyin":"duōme"},{"id":362,"viet":"đói","cn":"饿","pinyin":"è"},{"id":363,"viet":"mà còn, hơn nữa","cn":"而且","pinyin":"érqiě"},{"id":364,"viet":"tai","cn":"耳朵","pinyin":"ěrduo"},{"id":365,"viet":"sốt","cn":"发烧","pinyin":"fā shāo"},{"id":366,"viet":"phát hiện","cn":"发现","pinyin":"fāxiàn"},{"id":367,"viet":"thuận tiện","cn":"方便","pinyin":"fāngbiàn"},{"id":368,"viet":"đặt, để","cn":"放","pinyin":"fàng"},{"id":369,"viet":"yên tâm","cn":"放心","pinyin":"fàng xīn"},{"id":370,"viet":"phút, phân","cn":"分","pinyin":"fēn"},{"id":371,"viet":"gần đây, vùng lân cận","cn":"附近","pinyin":"fùjìn"},{"id":372,"viet":"ôn tập","cn":"复习","pinyin":"fùxí"},{"id":373,"viet":"sạch sẽ","cn":"干净","pinyin":"gānjìng"},{"id":374,"viet":"dám","cn":"敢","pinyin":"gǎn"},{"id":375,"viet":"cảm mạo, cảm lạnh","cn":"感冒","pinyin":"gǎnmào"},{"id":376,"viet":"vừa mới","cn":"刚才","pinyin":"gāngcái"},{"id":377,"viet":"cùng với","cn":"跟","pinyin":"gēn"},{"id":378,"viet":"căn cứ vào","cn":"根据","pinyin":"gēnjù"},{"id":379,"viet":"hơn, càng","cn":"更","pinyin":"gèng"},{"id":380,"viet":"công viên","cn":"公园","pinyin":"gōngyuán"},{"id":381,"viet":"câu chuyện","cn":"故事","pinyin":"gùshi"},{"id":382,"viet":"gió thổi","cn":"刮风","pinyin":"guā fēng"},{"id":383,"viet":"đóng, tắt","cn":"关","pinyin":"guān"},{"id":384,"viet":"quan hệ","cn":"关系","pinyin":"guānxi"},{"id":385,"viet":"quan tâm","cn":"关心","pinyin":"guānxīn"},{"id":386,"viet":"về (liên quan đến)","cn":"关于","pinyin":"guānyú"},{"id":387,"viet":"quốc gia","cn":"国家","pinyin":"guójiā"},{"id":388,"viet":"nước ép trái cây","cn":"果汁","pinyin":"guǒzhī"},{"id":389,"viet":"quá khứ","cn":"过去","pinyin":"guòqù"},{"id":390,"viet":"vẫn còn, hay là","cn":"还是","pinyin":"háishi"},{"id":391,"viet":"sợ","cn":"害怕","pinyin":"hàipà"},{"id":392,"viet":"sông","cn":"河","pinyin":"hé"},{"id":393,"viet":"bảng đen","cn":"黑板","pinyin":"hēibǎn"},{"id":394,"viet":"hộ chiếu","cn":"护照","pinyin":"hùzhào"},{"id":395,"viet":"hoa, tiêu (tiền, thời gian)","cn":"花","pinyin":"huā"},{"id":396,"viet":"vườn hoa","cn":"花园","pinyin":"huāyuán"},{"id":397,"viet":"vẽ, tranh","cn":"画","pinyin":"huà"},{"id":398,"viet":"hỏng, xấu","cn":"坏","pinyin":"huài"},{"id":399,"viet":"trả lại, hoàn","cn":"还","pinyin":"hái"},{"id":400,"viet":"môi trường","cn":"环境","pinyin":"huánjìng"},{"id":401,"viet":"đổi","cn":"换","pinyin":"huàn"},{"id":402,"viet":"màu vàng","cn":"黄","pinyin":"huáng"},{"id":403,"viet":"hội nghị, cuộc họp","cn":"会议","pinyin":"huìyì"},{"id":404,"viet":"hoặc là","cn":"或者","pinyin":"huòzhě"},{"id":405,"viet":"cơ hội","cn":"机会","pinyin":"jīhuì"},{"id":406,"viet":"hầu như, gần như","cn":"几乎","pinyin":"jīhū"},{"id":407,"viet":"cực kỳ","cn":"极","pinyin":"jí"},{"id":408,"viet":"nhớ, nhớ đến","cn":"记得","pinyin":"jìde"},{"id":409,"viet":"mùa","cn":"季节","pinyin":"jìjié"},{"id":410,"viet":"kiểm tra","cn":"检查","pinyin":"jiǎnchá"},{"id":411,"viet":"đơn giản","cn":"简单","pinyin":"jiǎndān"},{"id":412,"viet":"khỏe mạnh","cn":"健康","pinyin":"jiànkāng"},{"id":413,"viet":"gặp mặt","cn":"见面","pinyin":"jiàn miàn"},{"id":414,"viet":"nói, giảng","cn":"讲","pinyin":"jiǎng"},{"id":415,"viet":"dạy","cn":"教","pinyin":"jiāo"},{"id":416,"viet":"góc","cn":"角","pinyin":"jiǎo"},{"id":417,"viet":"chân","cn":"脚","pinyin":"jiǎo"},{"id":418,"viet":"nhận, tiếp","cn":"接","pinyin":"jiē"},{"id":419,"viet":"đường phố","cn":"街道","pinyin":"jiēdào"},{"id":420,"viet":"kết hôn","cn":"结婚","pinyin":"jié hūn"},{"id":421,"viet":"kết thúc","cn":"结束","pinyin":"jiéshù"},{"id":422,"viet":"chương trình","cn":"节目","pinyin":"jiémù"},{"id":423,"viet":"ngày lễ","cn":"节日","pinyin":"jiérì"},{"id":424,"viet":"giải quyết","cn":"解决","pinyin":"jiějué"},{"id":425,"viet":"mượn","cn":"借","pinyin":"jiè"},{"id":426,"viet":"thường xuyên","cn":"经常","pinyin":"jīngcháng"},{"id":427,"viet":"trải qua","cn":"经过","pinyin":"jīngguò"},{"id":428,"viet":"kinh nghiệm","cn":"经历","pinyin":"jīnglì"},{"id":429,"viet":"lâu","cn":"久","pinyin":"jiǔ"},{"id":430,"viet":"cũ","cn":"旧","pinyin":"jiù"},{"id":431,"viet":"tổ chức","cn":"举行","pinyin":"jǔxíng"},{"id":432,"viet":"câu","cn":"句子","pinyin":"jùzi"},{"id":433,"viet":"quyết định","cn":"决定","pinyin":"juédìng"},{"id":434,"viet":"đáng yêu","cn":"可爱","pinyin":"kě'ài"},{"id":435,"viet":"khắc (15 phút)","cn":"刻","pinyin":"kè"},{"id":436,"viet":"khách","cn":"客人","pinyin":"kèrén"},{"id":437,"viet":"máy điều hòa","cn":"空调","pinyin":"kōngtiáo"},{"id":438,"viet":"miệng, khẩu","cn":"口","pinyin":"kǒu"},{"id":439,"viet":"khóc","cn":"哭","pinyin":"kū"},{"id":440,"viet":"quần","cn":"裤子","pinyin":"kùzi"},{"id":441,"viet":"đũa","cn":"筷子","pinyin":"kuàizi"},{"id":442,"viet":"màu xanh dương","cn":"蓝","pinyin":"lán"},{"id":443,"viet":"già, cũ","cn":"老","pinyin":"lǎo"},{"id":444,"viet":"rời khỏi","cn":"离开","pinyin":"líkāi"},{"id":445,"viet":"quà","cn":"礼物","pinyin":"lǐwù"},{"id":446,"viet":"lịch sử","cn":"历史","pinyin":"lìshǐ"},{"id":447,"viet":"mặt","cn":"脸","pinyin":"liǎn"},{"id":448,"viet":"luyện tập","cn":"练习","pinyin":"liànxí"},{"id":449,"viet":"chiếc (xe)","cn":"辆","pinyin":"liàng"},{"id":450,"viet":"hiểu rõ","cn":"了解","pinyin":"liǎojiě"},{"id":451,"viet":"hàng xóm","cn":"邻居","pinyin":"línjū"},{"id":452,"viet":"tòa nhà","cn":"楼","pinyin":"lóu"},{"id":453,"viet":"con ngựa","cn":"马","pinyin":"mǎ"},{"id":454,"viet":"ngay lập tức","cn":"马上","pinyin":"mǎshàng"},{"id":455,"viet":"hài lòng","cn":"满意","pinyin":"mǎnyì"},{"id":456,"viet":"mũ","cn":"帽子","pinyin":"màozi"},{"id":457,"viet":"gạo, mét","cn":"米","pinyin":"mǐ"},{"id":458,"viet":"bánh mì","cn":"面包","pinyin":"miànbāo"},{"id":459,"viet":"mì sợi","cn":"面条","pinyin":"miàntiáo"},{"id":460,"viet":"hiểu rõ","cn":"明白","pinyin":"míngbai"},{"id":461,"viet":"cầm, lấy","cn":"拿","pinyin":"ná"},{"id":462,"viet":"bà nội","cn":"奶奶","pinyin":"nǎinai"},{"id":463,"viet":"phía nam","cn":"南","pinyin":"nán"},{"id":464,"viet":"khó","cn":"难","pinyin":"nán"},{"id":465,"viet":"buồn","cn":"难过","pinyin":"nánguò"},{"id":466,"viet":"lớp, năm học","cn":"年级","pinyin":"niánjí"},{"id":467,"viet":"trẻ","cn":"年轻","pinyin":"niánqīng"},{"id":468,"viet":"chim","cn":"鸟","pinyin":"niǎo"},{"id":469,"viet":"nỗ lực, chăm chỉ","cn":"努力","pinyin":"nǔlì"},{"id":470,"viet":"leo núi","cn":"爬山","pinyin":"pá shān"},{"id":471,"viet":"đĩa","cn":"盘子","pinyin":"pánzi"},{"id":472,"viet":"béo","cn":"胖","pinyin":"pàng"},{"id":473,"viet":"bia","cn":"啤酒","pinyin":"píjiǔ"},{"id":474,"viet":"nho","cn":"葡萄","pinyin":"pútao"},{"id":475,"viet":"tiếng Phổ thông (tiếng Trung chuẩn)","cn":"普通话","pinyin":"pǔtōnghuà"},{"id":476,"viet":"cưỡi, đi (xe đạp, xe máy)","cn":"骑","pinyin":"qí"},{"id":477,"viet":"thực ra","cn":"其实","pinyin":"qíshí"},{"id":478,"viet":"khác","cn":"其他","pinyin":"qítā"},{"id":479,"viet":"kỳ lạ","cn":"奇怪","pinyin":"qíguài"},{"id":480,"viet":"bút chì","cn":"铅笔","pinyin":"qiānbǐ"},{"id":481,"viet":"rõ ràng","cn":"清楚","pinyin":"qīngchǔ"},{"id":482,"viet":"mùa thu","cn":"秋","pinyin":"qiū"},{"id":483,"viet":"váy","cn":"裙子","pinyin":"qúnzi"},{"id":484,"viet":"sau đó","cn":"然后","pinyin":"ránhòu"},{"id":485,"viet":"nhiệt tình","cn":"热情","pinyin":"rèqíng"},{"id":486,"viet":"cho rằng","cn":"认为","pinyin":"rènwéi"},{"id":487,"viet":"nghiêm túc","cn":"认真","pinyin":"rènzhēn"},{"id":488,"viet":"dễ dàng","cn":"容易","pinyin":"róngyì"},{"id":489,"viet":"nếu như","cn":"如果","pinyin":"rúguǒ"},{"id":490,"viet":"ô, dù","cn":"伞","pinyin":"sǎn"},{"id":491,"viet":"lên mạng","cn":"上网","pinyin":"shàng wǎng"},{"id":492,"viet":"giận dữ","cn":"生气","pinyin":"shēng qì"},{"id":493,"viet":"âm thanh","cn":"声音","pinyin":"shēngyīn"},{"id":494,"viet":"khiến, làm cho","cn":"使","pinyin":"shǐ"},{"id":495,"viet":"thế giới","cn":"世界","pinyin":"shìjiè"},{"id":496,"viet":"gầy","cn":"瘦","pinyin":"shòu"},{"id":497,"viet":"thoải mái","cn":"舒服","pinyin":"shūfu"},{"id":498,"viet":"chú","cn":"叔叔","pinyin":"shūshu"},{"id":499,"viet":"cây","cn":"树","pinyin":"shù"},{"id":500,"viet":"toán học","cn":"数学","pinyin":"shùxué"},{"id":501,"viet":"đánh răng","cn":"刷牙","pinyin":"shuā yá"},{"id":502,"viet":"đôi","cn":"双","pinyin":"shuāng"},{"id":503,"viet":"trình độ","cn":"水平","pinyin":"shuǐpíng"},{"id":504,"viet":"lái xe, tài xế","cn":"司机","pinyin":"sījī"},{"id":505,"viet":"tuy rằng","cn":"虽然","pinyin":"suīrán"},{"id":506,"viet":"mặt trời","cn":"太阳","pinyin":"tàiyáng"},{"id":507,"viet":"kẹo, đường","cn":"糖","pinyin":"táng"},{"id":508,"viet":"đặc biệt","cn":"特别","pinyin":"tèbié"},{"id":509,"viet":"đau","cn":"疼","pinyin":"téng"},{"id":510,"viet":"nâng cao","cn":"提高","pinyin":"tígāo"},{"id":511,"viet":"thể dục, thể thao","cn":"体育","pinyin":"tǐyù"},{"id":512,"viet":"ngọt","cn":"甜","pinyin":"tián"},{"id":513,"viet":"sợi, cái","cn":"条","pinyin":"tiáo"},{"id":514,"viet":"đồng nghiệp","cn":"同事","pinyin":"tóngshì"},{"id":515,"viet":"đồng ý","cn":"同意","pinyin":"tóngyì"},{"id":516,"viet":"tóc","cn":"头发","pinyin":"tóufa"},{"id":517,"viet":"đột nhiên","cn":"突然","pinyin":"tūrán"},{"id":518,"viet":"thư viện","cn":"图书馆","pinyin":"túshūguǎn"},{"id":519,"viet":"chân (đùi)","cn":"腿","pinyin":"tuǐ"},{"id":520,"viet":"hoàn thành","cn":"完成","pinyin":"wánchéng"},{"id":521,"viet":"bát","cn":"碗","pinyin":"wǎn"},{"id":522,"viet":"vạn, mười nghìn","cn":"万","pinyin":"wàn"},{"id":523,"viet":"quên","cn":"忘记","pinyin":"wàngjì"},{"id":524,"viet":"vị, ngài","cn":"位","pinyin":"wèi"},{"id":525,"viet":"vì","cn":"为","pinyin":"wèi"},{"id":526,"viet":"để, vì","cn":"为了","pinyin":"wèile"},{"id":527,"viet":"văn hóa","cn":"文化","pinyin":"wénhuà"},{"id":528,"viet":"phía tây","cn":"西","pinyin":"xī"},{"id":529,"viet":"thói quen","cn":"习惯","pinyin":"xíguàn"},{"id":530,"viet":"nhà vệ sinh","cn":"洗手间","pinyin":"xǐshǒujiān"},{"id":531,"viet":"tắm","cn":"洗澡","pinyin":"xǐzǎo"},{"id":532,"viet":"thích","cn":"喜欢","pinyin":"xǐhuan"},{"id":533,"viet":"hiện tại","cn":"现在","pinyin":"xiànzài"},{"id":534,"viet":"chuối","cn":"香蕉","pinyin":"xiāngjiāo"},{"id":535,"viet":"giống nhau","cn":"相同","pinyin":"xiāngtóng"},{"id":536,"viet":"tin tưởng","cn":"相信","pinyin":"xiāngxìn"},{"id":537,"viet":"giống","cn":"像","pinyin":"xiàng"},{"id":538,"viet":"cẩn thận","cn":"小心","pinyin":"xiǎoxīn"},{"id":539,"viet":"hiệu trưởng","cn":"校长","pinyin":"xiàozhǎng"},{"id":540,"viet":"giày","cn":"鞋","pinyin":"xié"},{"id":541,"viet":"tin tức","cn":"新闻","pinyin":"xīnwén"},{"id":542,"viet":"tươi mới","cn":"新鲜","pinyin":"xīnxiān"},{"id":543,"viet":"thư, tin","cn":"信","pinyin":"xìn"},{"id":544,"viet":"vali","cn":"行李箱","pinyin":"xínglǐxiāng"},{"id":545,"viet":"hứng thú","cn":"兴趣","pinyin":"xìngqù"},{"id":546,"viet":"gấu trúc","cn":"熊猫","pinyin":"xióngmāo"},{"id":547,"viet":"cần","cn":"需要","pinyin":"xūyào"},{"id":548,"viet":"lựa chọn","cn":"选择","pinyin":"xuǎnzé"},{"id":549,"viet":"kính mắt","cn":"眼镜","pinyin":"yǎnjìng"},{"id":550,"viet":"yêu cầu","cn":"要求","pinyin":"yāoqiú"},{"id":551,"viet":"ông nội","cn":"爷爷","pinyin":"yéye"},{"id":552,"viet":"nhất định","cn":"一定","pinyin":"yīdìng"},{"id":553,"viet":"tổng cộng","cn":"一共","pinyin":"yīgòng"},{"id":554,"viet":"một lát","cn":"一会儿","pinyin":"yīhuìr"},{"id":555,"viet":"giống nhau","cn":"一样","pinyin":"yīyàng"},{"id":556,"viet":"sau này","cn":"以后","pinyin":"yǐhòu"},{"id":557,"viet":"trước đây","cn":"以前","pinyin":"yǐqián"},{"id":558,"viet":"cho rằng (nhầm)","cn":"以为","pinyin":"yǐwéi"},{"id":559,"viet":"thông thường","cn":"一般","pinyin":"yībān"},{"id":560,"viet":"vừa ... vừa ...","cn":"一边","pinyin":"yībiān"},{"id":561,"viet":"luôn luôn","cn":"一直","pinyin":"yīzhí"},{"id":562,"viet":"âm nhạc","cn":"音乐","pinyin":"yīnyuè"},{"id":563,"viet":"ngân hàng","cn":"银行","pinyin":"yínháng"},{"id":564,"viet":"nên","cn":"应该","pinyin":"yīnggāi"},{"id":565,"viet":"ảnh hưởng","cn":"影响","pinyin":"yǐngxiǎng"},{"id":566,"viet":"dùng","cn":"用","pinyin":"yòng"},{"id":567,"viet":"trò chơi","cn":"游戏","pinyin":"yóuxì"},{"id":568,"viet":"lại, vừa","cn":"又","pinyin":"yòu"},{"id":569,"viet":"nổi tiếng","cn":"有名","pinyin":"yǒumíng"},{"id":570,"viet":"gặp phải","cn":"遇到","pinyin":"yùdào"},{"id":571,"viet":"mặt trăng","cn":"月亮","pinyin":"yuèliang"},{"id":572,"viet":"mây","cn":"云","pinyin":"yún"},{"id":573,"viet":"đứng, trạm","cn":"站","pinyin":"zhàn"},{"id":574,"viet":"dài","cn":"长","pinyin":"zhǎng"},{"id":575,"viet":"lo lắng","cn":"着急","pinyin":"zhāojí"},{"id":576,"viet":"chăm sóc","cn":"照顾","pinyin":"zhàogù"},{"id":577,"viet":"bức ảnh","cn":"照片","pinyin":"zhàopiàn"},{"id":578,"viet":"máy ảnh","cn":"照相机","pinyin":"zhàoxiàngjī"},{"id":579,"viet":"chỉ","cn":"只","pinyin":"zhǐ"},{"id":580,"viet":"ở giữa","cn":"中间","pinyin":"zhōngjiān"},{"id":581,"viet":"cuối cùng","cn":"终于","pinyin":"zhōngyú"},{"id":582,"viet":"loại, hạt giống","cn":"种","pinyin":"zhǒng"},{"id":583,"viet":"quan trọng","cn":"重要","pinyin":"zhòngyào"},{"id":584,"viet":"chủ yếu","cn":"主要","pinyin":"zhǔyào"},{"id":585,"viet":"cuối tuần","cn":"周末","pinyin":"zhōumò"},{"id":586,"viet":"chúc","cn":"祝","pinyin":"zhù"},{"id":587,"viet":"chú ý","cn":"注意","pinyin":"zhùyì"},{"id":588,"viet":"từ điển","cn":"字典","pinyin":"zìdiǎn"},{"id":589,"viet":"bản thân","cn":"自己","pinyin":"zìjǐ"},{"id":590,"viet":"luôn luôn","cn":"总是","pinyin":"zǒngshì"},{"id":591,"viet":"gần đây","cn":"最近","pinyin":"zuìjìn"},{"id":592,"viet":"bài tập về nhà","cn":"作业","pinyin":"zuòyè"},{"id":593,"viet":"tác dụng","cn":"作用","pinyin":"zuòyòng"}];
+
+// ── STATE ────────────────────────────────────────────────
+let words=[], prog={}, sess={ok:0,err:0,tot:0}, streak=0, act={};
+let deck=[], di=0, fcOrd='seq', fcFace='viet', fcFilt='all', flipped=false;
+let tDir='cn2v', tQueue=[], ti=0;
+let listSort='id', listQ='';
+let qtWords=[], qtIdx=0, qtTimerSec=10, qtTimerInterval=null, qtRevealTimer=null;
+let hzWriters=[];
+
+// ── LOAD/SAVE ─────────────────────────────────────────────
+function load(){
+  const sw=localStorage.getItem('hv3_words');
+  words=sw?JSON.parse(sw):JSON.parse(JSON.stringify(WORDS_RAW));
+  const sp=localStorage.getItem('hv3_prog'); prog=sp?JSON.parse(sp):{};
+  const ss=localStorage.getItem('hv3_sess'); sess=ss?JSON.parse(ss):{ok:0,err:0,tot:0};
+  streak=+(localStorage.getItem('hv3_streak')||0);
+  const sa=localStorage.getItem('hv3_act'); act=sa?JSON.parse(sa):{};
+  words.forEach(w=>{if(!prog[w.id])prog[w.id]={status:'new',ok:0,err:0};});
+  save(); updateHeader();
+}
+function save(){
+  localStorage.setItem('hv3_words',JSON.stringify(words));
+  localStorage.setItem('hv3_prog',JSON.stringify(prog));
+  localStorage.setItem('hv3_sess',JSON.stringify(sess));
+  localStorage.setItem('hv3_streak',String(streak));
+  localStorage.setItem('hv3_act',JSON.stringify(act));
+}
+function updateHeader(){
+  const m=Object.values(prog).filter(p=>p.status==='mastered').length;
+  document.getElementById('hS').textContent=streak;
+  document.getElementById('hM').textContent=m;
+  document.getElementById('hT').textContent=words.length;
+}
+
+// ── TABS ──────────────────────────────────────────────────
+function goTab(id,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('pan-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='fc') renderDeck();
+  if(id==='list') renderList();
+  if(id==='stats') renderStats();
+  if(id==='test') startTest();
+}
+
+// ── FLASHCARD ─────────────────────────────────────────────
+function buildDeck(){
+  let p=fcFilt==='all'?[...words]:words.filter(w=>(prog[w.id]||{}).status===fcFilt);
+  if(!p.length)p=[...words];
+  return fcOrd==='rnd'?p.sort(()=>Math.random()-.5):p;
+}
+function renderDeck(){deck=buildDeck();di=0;flipped=false;showCard();}
+function showCard(){
+  if(!deck.length)return;
+  const w=deck[di];
+  document.getElementById('fcCtr').innerHTML='<b>'+(di+1)+'</b> / '+deck.length;
+  if(fcFace==='viet'){
+    document.getElementById('frontLbl').textContent='Tiếng Việt';
+    const ft=document.getElementById('frontTxt');
+    ft.style.cssText='font-size:24px;font-family:inherit';
+    ft.textContent=w.viet;
+    document.getElementById('backLbl').textContent='Tiếng Trung';
+    const bc=document.getElementById('backCn');
+    bc.style.cssText='font-size:60px;color:var(--g600);font-family:"Noto Sans SC"';
+    bc.textContent=w.cn;
+    document.getElementById('backPy').textContent=w.pinyin;
+    document.getElementById('backSub').textContent='';
+  } else {
+    document.getElementById('frontLbl').textContent='Tiếng Trung';
+    const ft=document.getElementById('frontTxt');
+    ft.style.cssText='font-size:50px;font-family:"Noto Sans SC"';
+    ft.textContent=w.cn;
+    document.getElementById('backLbl').textContent='Tiếng Việt';
+    const bc=document.getElementById('backCn');
+    bc.style.cssText='font-size:28px;font-family:inherit;color:var(--ink)';
+    bc.textContent=w.viet;
+    document.getElementById('backPy').textContent=w.pinyin;
+    document.getElementById('backSub').textContent=w.cn;
+  }
+  document.getElementById('cardInner').classList.remove('flip');
+  document.getElementById('markBtns').style.display='none';
+  flipped=false;
+  const m=Object.values(prog).filter(p=>p.status==='mastered').length;
+  document.getElementById('fcPbar').style.width=(di/deck.length*100)+'%';
+  document.getElementById('fcPLbl').textContent=di+' / '+deck.length;
+  document.getElementById('fcMLbl').textContent=m+' thuộc 🎯';
+}
+function flipCard(){
+  document.getElementById('cardInner').classList.toggle('flip');
+  flipped=!flipped;
+  if(flipped){
+    document.getElementById('markBtns').style.display='flex';
+    const w=deck[di];
+    if(prog[w.id].status==='new'){prog[w.id].status='learning';save();updateHeader();}
+  } else document.getElementById('markBtns').style.display='none';
+}
+function markCard(ok){
+  const w=deck[di];
+  if(ok){prog[w.id].ok=(prog[w.id].ok||0)+1;prog[w.id].status=prog[w.id].ok>=3?'mastered':'learning';}
+  else{prog[w.id].ok=0;prog[w.id].status='learning';}
+  save();updateHeader();nextCard();
+}
+function nextCard(){if(di<deck.length-1){di++;showCard();}else toast('🎉 Xong bộ thẻ!');}
+function prevCard(){if(di>0){di--;showCard();}}
+function shuffleDeck(){deck=deck.sort(()=>Math.random()-.5);di=0;showCard();toast('🔀 Đã xáo!');}
+function setOrd(o,btn){
+  fcOrd=o;
+  document.querySelectorAll('#ord-seq,#ord-rnd').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on'); renderDeck();
+}
+function setFace(f,btn){
+  fcFace=f;
+  document.querySelectorAll('#fc-viet,#fc-cn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on'); renderDeck();
+}
+function setFilter(f,btn){
+  fcFilt=f;
+  document.querySelectorAll('#fl-all,#fl-new,#fl-lrn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on'); renderDeck();
+}
+function jumpTo(){
+  const n=parseInt(document.getElementById('jumpInput').value);
+  if(isNaN(n)||n<1||n>deck.length){toast('⚠️ STT không hợp lệ (1–'+deck.length+')');return;}
+  di=n-1; showCard();
+  document.getElementById('jumpInput').value='';
+  toast('⤵ Nhảy đến thẻ #'+n);
+}
+
+// ── TEST ──────────────────────────────────────────────────
+function startTest(){tQueue=[...words].sort(()=>Math.random()-.5);ti=0;showTestCard();}
+function showTestCard(){
+  const w=tQueue[ti%tQueue.length];
+  if(tDir==='cn2v'){
+    document.getElementById('tLabel').textContent='Nghĩa tiếng Việt là gì?';
+    const q=document.getElementById('tQ'); q.className='t-q'; q.textContent=w.cn;
+    document.getElementById('tSub').textContent=w.pinyin;
+  } else {
+    document.getElementById('tLabel').textContent='Viết Pinyin của từ này:';
+    const q=document.getElementById('tQ'); q.className='t-q viet'; q.textContent=w.viet;
+    document.getElementById('tSub').textContent='';
+  }
+  const inp=document.getElementById('tInput');
+  inp.value=''; inp.className='t-input';
+  inp.placeholder=tDir==='cn2v'?'Nhập nghĩa tiếng Việt…':'Nhập pinyin…';
+  document.getElementById('fb').className='fb';
+  inp.focus();
+}
+const normPin=s=>s.toLowerCase().replace(/[āáǎàōóǒòūúǔùīíǐìēéěè]/g,c=>({"ā":"a","á":"a","ǎ":"a","à":"a","ō":"o","ó":"o","ǒ":"o","ò":"o","ū":"u","ú":"u","ǔ":"u","ù":"u","ī":"i","í":"i","ǐ":"i","ì":"i","ē":"e","é":"e","ě":"e","è":"e"}[c]||c));
+const normViet=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[đĐ]/g,'d').toLowerCase().trim();
+function checkAnswer(){
+  const w=tQueue[ti%tQueue.length];
+  const raw=document.getElementById('tInput').value.trim();
+  let ok=false;
+  if(tDir==='cn2v'){
+    const val=raw.toLowerCase();
+    const exp=w.viet.toLowerCase();
+    ok=val===exp||normViet(val)===normViet(exp)||normViet(val)===normViet(exp.split('(')[0]);
+  } else {
+    ok=normPin(raw)===normPin(w.pinyin)||raw===w.pinyin;
+  }
+  const inp=document.getElementById('tInput');
+  inp.className='t-input '+(ok?'ok':'err');
+  const fb=document.getElementById('fb');
+  if(ok){
+    fb.className='fb ok show';
+    fb.innerHTML='✅ Đúng! — <b>'+w.viet+'</b>';
+    prog[w.id].ok=(prog[w.id].ok||0)+1;
+    prog[w.id].status=prog[w.id].ok>=3?'mastered':'learning';
+    sess.ok++;
+  } else {
+    fb.className='fb err show';
+    fb.innerHTML='❌ Đáp án: <b>'+(tDir==='cn2v'?w.viet:w.pinyin)+'</b>';
+    prog[w.id].ok=0; prog[w.id].status='learning'; sess.err++;
+  }
+  sess.tot++;
+  act[new Date().toISOString().slice(0,10)]=(act[new Date().toISOString().slice(0,10)]||0)+1;
+  save(); updateHeader(); updateTestScore();
+}
+function nextTest(){ti++;showTestCard();}
+function resetTest(){sess={ok:0,err:0,tot:0};save();updateTestScore();startTest();toast('🔄 Reset!');}
+function updateTestScore(){
+  document.getElementById('sc-ok').textContent=sess.ok;
+  document.getElementById('sc-err').textContent=sess.err;
+  document.getElementById('sc-tot').textContent=sess.tot;
+}
+function setTDir(d,btn){
+  tDir=d;
+  document.querySelectorAll('#td-cn2v,#td-v2cn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on'); showTestCard();
+}
+
+// ── QUICK TEST ────────────────────────────────────────────
+let qtPaused=false, qtRemaining=10, qtPhase='counting'; // counting | revealed
+
+let qtOrderMode='seq'; // seq | rnd
+
+function setQtTime(sec,btn){
+  qtTimerSec=sec;
+  document.querySelectorAll('#qt-t10,#qt-t20,#qt-t30').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+function setQtOrder(o,btn){
+  qtOrderMode=o;
+  document.querySelectorAll('#qt-ord-seq,#qt-ord-rnd').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+function openQuickTest(){
+  qtIdx=0; qtTimerSec=10; qtOrderMode='seq';
+  document.getElementById('qtSetup').style.display='block';
+  document.getElementById('qtMain').style.display='none';
+  document.getElementById('qtDone').classList.remove('show');
+  document.querySelectorAll('#qt-t10,#qt-t20,#qt-t30').forEach(b=>b.classList.remove('on'));
+  document.getElementById('qt-t10').classList.add('on');
+  document.querySelectorAll('#qt-ord-seq,#qt-ord-rnd').forEach(b=>b.classList.remove('on'));
+  document.getElementById('qt-ord-seq').classList.add('on');
+  const fi=fcFilt==='all'?'Tất cả':fcFilt==='new'?'Chưa học':'Đang học';
+  document.getElementById('qtDeckInfo').textContent=deck.length+' thẻ trong bộ hiện tại · '+fi;
+  document.getElementById('qtMaxLbl').textContent='/'+deck.length;
+  document.getElementById('qtStartInput').value=1;
+  document.getElementById('qtStartInput').max=deck.length;
+  document.getElementById('qtEndInput').value=deck.length;
+  document.getElementById('qtEndInput').max=deck.length;
+  document.getElementById('qtOverlay').classList.add('open');
+}
+function startQuickTest(){
+  let startN=parseInt(document.getElementById('qtStartInput').value)||1;
+  let endN=parseInt(document.getElementById('qtEndInput').value)||deck.length;
+  if(startN<1)startN=1;
+  if(endN>deck.length)endN=deck.length;
+  if(startN>endN){const t=startN;startN=endN;endN=t;} // auto-swap if reversed
+  qtWords=deck.slice(startN-1, endN);
+  if(qtOrderMode==='rnd') qtWords=qtWords.sort(()=>Math.random()-.5);
+  qtIdx=0;
+  qtPaused=false;
+  document.getElementById('qtSetup').style.display='none';
+  document.getElementById('qtMain').style.display='block';
+  document.getElementById('qtDone').classList.remove('show');
+  // sync live time chips with chosen setup time
+  document.querySelectorAll('#qtl-t10,#qtl-t20,#qtl-t30').forEach(b=>b.classList.remove('on'));
+  document.getElementById('qtl-t'+qtTimerSec).classList.add('on');
+  document.getElementById('qtPauseBtn').textContent='⏸ Tạm dừng';
+  runQtCard();
+}
+function restartQuickTest(){
+  qtIdx=0; qtPaused=false;
+  document.getElementById('qtDone').classList.remove('show');
+  document.getElementById('qtMain').style.display='block';
+  document.getElementById('qtPauseBtn').textContent='⏸ Tạm dừng';
+  runQtCard();
+}
+function runQtCard(){
+  clearInterval(qtTimerInterval); clearTimeout(qtRevealTimer);
+  if(qtIdx>=qtWords.length){endQuickTest(true);return;}
+  qtPhase='counting'; qtPaused=false;
+  document.getElementById('qtPauseBtn').textContent='⏸ Tạm dừng';
+  const w=qtWords[qtIdx];
+  document.getElementById('qtCounter').textContent=(qtIdx+1)+' / '+qtWords.length;
+  document.getElementById('qtLbl').textContent='Chữ Hán là gì?';
+  const qw=document.getElementById('qtWord');
+  qw.style.fontFamily="'Be Vietnam Pro',sans-serif";
+  qw.style.fontSize='26px';
+  qw.style.color='var(--ink)';
+  qw.textContent=w.viet;
+  document.getElementById('qtReveal').textContent='';
+  qtRemaining=qtTimerSec;
+  renderQtFill(true);
+  startQtCountdown();
+}
+function renderQtFill(reset){
+  const fill=document.getElementById('qtFill');
+  const num=document.getElementById('qtTimerNum');
+  if(reset){
+    fill.style.transition='none';
+    fill.style.width='100%';
+  }
+  fill.className='qt-timer-fill'+(qtRemaining<=3?' warn':'');
+  num.className='qt-timer-num'+(qtRemaining<=3?' warn':'');
+  num.textContent=qtRemaining;
+  if(reset){
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      fill.style.transition='width '+qtRemaining+'s linear';
+      fill.style.width='0%';
+    }));
+  }
+}
+function startQtCountdown(){
+  clearInterval(qtTimerInterval);
+  qtTimerInterval=setInterval(()=>{
+    if(qtPaused)return;
+    qtRemaining--;
+    const fill=document.getElementById('qtFill');
+    const num=document.getElementById('qtTimerNum');
+    num.textContent=qtRemaining;
+    if(qtRemaining<=3){fill.className='qt-timer-fill warn';num.className='qt-timer-num warn';}
+    if(qtRemaining<=0){clearInterval(qtTimerInterval);revealQtAnswer(qtWords[qtIdx]);}
+  },1000);
+}
+function toggleQtPause(){
+  qtPaused=!qtPaused;
+  const btn=document.getElementById('qtPauseBtn');
+  const fill=document.getElementById('qtFill');
+  if(qtPaused){
+    btn.textContent='▶ Tiếp tục';
+    // freeze the progress bar at current width
+    const computedWidth=getComputedStyle(fill).width;
+    fill.style.transition='none';
+    fill.style.width=computedWidth;
+    if(qtPhase==='revealed'){clearTimeout(qtRevealTimer);}
+  } else {
+    btn.textContent='⏸ Tạm dừng';
+    if(qtPhase==='counting'){
+      // resume bar animation for remaining seconds
+      const fillBox=fill.parentElement.getBoundingClientRect().width;
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        fill.style.transition='width '+qtRemaining+'s linear';
+        fill.style.width='0%';
+      }));
+    } else if(qtPhase==='revealed'){
+      qtRevealTimer=setTimeout(()=>{qtIdx++;runQtCard();},900);
+    }
+  }
+}
+function setQtTimeLive(sec,btn){
+  document.querySelectorAll('#qtl-t10,#qtl-t20,#qtl-t30').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  qtTimerSec=sec;
+  // if currently counting down (not yet revealed), restart the timer for this card with new duration
+  if(qtPhase==='counting' && !qtPaused){
+    qtRemaining=sec;
+    renderQtFill(true);
+    startQtCountdown();
+    toast('⏱ Đổi thời gian: '+sec+'s');
+  } else {
+    toast('⏱ Thời gian mới ('+sec+'s) áp dụng từ thẻ tiếp theo');
+  }
+}
+function revealQtAnswer(w){
+  clearInterval(qtTimerInterval);
+  qtPhase='revealed';
+  const qw=document.getElementById('qtWord');
+  qw.style.fontFamily="'Noto Sans SC',sans-serif";
+  qw.style.fontSize='72px';
+  qw.style.color='var(--g600)';
+  qw.textContent=w.cn;
+  document.getElementById('qtReveal').textContent=w.pinyin+' · '+w.viet;
+  speakText(w.cn);
+  if(!qtPaused) qtRevealTimer=setTimeout(()=>{qtIdx++;runQtCard();},1800);
+}
+function skipQtCard(){
+  clearInterval(qtTimerInterval); clearTimeout(qtRevealTimer);
+  qtPaused=false;
+  document.getElementById('qtPauseBtn').textContent='⏸ Tạm dừng';
+  revealQtAnswer(qtWords[qtIdx]);
+}
+function stopQuickTest(){
+  clearInterval(qtTimerInterval); clearTimeout(qtRevealTimer);
+  const done=qtIdx+1, total=qtWords.length;
+  document.getElementById('qtMain').style.display='none';
+  document.getElementById('qtDone').classList.add('show');
+  document.getElementById('qtDoneEmoji').textContent='⏹';
+  document.getElementById('qtScoreBig').textContent=done+' / '+total;
+  document.getElementById('qtDoneMsg').textContent='Đã dừng kiểm tra nhanh giữa chừng';
+}
+function endQuickTest(){
+  document.getElementById('qtMain').style.display='none';
+  document.getElementById('qtDone').classList.add('show');
+  document.getElementById('qtDoneEmoji').textContent='🎉';
+  document.getElementById('qtScoreBig').textContent=qtWords.length+' từ ✅';
+  document.getElementById('qtDoneMsg').textContent='Hoàn thành!';
+}
+function closeQuickTest(){
+  clearInterval(qtTimerInterval); clearTimeout(qtRevealTimer);
+  document.getElementById('qtOverlay').classList.remove('open');
+}
+
+// ── TEXT TO SPEECH ────────────────────────────────────────
+function speakText(text, lang){
+  if(!('speechSynthesis' in window)){toast('⚠️ Thiết bị không hỗ trợ phát âm');return;}
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang=lang||'zh-CN';
+  u.rate=0.85;
+  window.speechSynthesis.speak(u);
+}
+function speakCurrentCard(){
+  if(!deck.length)return;
+  const w=deck[di];
+  speakText(w.cn,'zh-CN');
+}
+
+// ── HANZI WRITER ─────────────────────────────────────────
+function showHzModal(cn,viet){
+  const chars=[...cn].filter(c=>/[\u4e00-\u9fa5]/.test(c));
+  if(!chars.length){toast('Không có chữ Hán');return;}
+  document.getElementById('hzTitle').textContent='Cách viết: '+cn;
+  document.getElementById('hzSub').textContent=viet;
+  const container=document.getElementById('hzChars');
+  container.innerHTML=''; hzWriters=[];
+  chars.forEach((c,i)=>{
+    const box=document.createElement('div');
+    box.id='hz-'+i; box.className='hz-char-box';
+    container.appendChild(box);
+    try{
+      const w=HanziWriter.create('hz-'+i,c,{
+        width:110,height:110,padding:8,
+        strokeAnimationSpeed:0.8,delayBetweenStrokes:150,
+        strokeColor:'#22a066',radicalColor:'#f0a030',
+        showOutline:true,outlineColor:'#d6f5e3'
+      });
+      hzWriters.push(w);
+    }catch(e){}
+  });
+  document.getElementById('hzOverlay').classList.add('open');
+  setTimeout(()=>hzWriters.forEach(w=>w.animateCharacter()),200);
+}
+function showHzForCurrentCard(){
+  if(!deck.length)return;
+  const w=deck[di]; showHzModal(w.cn,w.viet);
+}
+function hzReplay(){hzWriters.forEach(w=>{try{w.animateCharacter();}catch(e){}});}
+function closeHzModal(){
+  hzWriters.forEach(w=>{try{w.cancelAnimation();}catch(e){}});
+  document.getElementById('hzOverlay').classList.remove('open');
+}
+
+// ── VOCAB LIST ────────────────────────────────────────────
+function renderList(){
+  let list=[...words];
+  if(listQ)list=list.filter(w=>w.viet.toLowerCase().includes(listQ)||w.cn.includes(listQ)||w.pinyin.toLowerCase().includes(listQ));
+  if(listSort==='status'){const o={mastered:0,learning:1,new:2};list.sort((a,b)=>o[(prog[a.id]||{status:'new'}).status]-o[(prog[b.id]||{status:'new'}).status]);}
+  document.getElementById('vtBody').innerHTML=list.map(w=>{
+    const st=(prog[w.id]||{status:'new'}).status;
+    const col=st==='mastered'?'var(--g500)':st==='learning'?'var(--amber)':'var(--border)';
+    const lbl=st==='mastered'?'Đã thuộc':st==='learning'?'Đang học':'Chưa học';
+    return'<tr><td style="color:var(--sub);font-size:12px">'+w.id+'</td><td>'+w.viet+'</td><td class="cn-cell">'+w.cn+'</td><td style="color:var(--sky);font-size:12px">'+w.pinyin+'</td><td><span style="display:inline-flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:'+col+';display:inline-block"></span><span style="font-size:11px;color:var(--sub)">'+lbl+'</span></span></td></tr>';
+  }).join('');
+}
+function filterList(q){listQ=q.toLowerCase();renderList();}
+function setSrt(s,btn){listSort=s;document.querySelectorAll('[onclick^="setSrt"]').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderList();}
+function resetProg(){if(!confirm('Reset toàn bộ tiến độ?'))return;words.forEach(w=>prog[w.id]={status:'new',ok:0,err:0});save();renderList();updateHeader();toast('🔄 Reset xong!');}
+
+// ── ADD ───────────────────────────────────────────────────
+function addWord(){
+  const v=document.getElementById('av').value.trim(),c=document.getElementById('ac').value.trim(),p=document.getElementById('ap').value.trim();
+  if(!v||!c||!p){toast('⚠️ Nhập đủ 3 trường');return;}
+  const id=Date.now();
+  words.push({id,viet:v,cn:c,pinyin:p,note:document.getElementById('an').value.trim()});
+  prog[id]={status:'new',ok:0,err:0};
+  save();updateHeader();
+  ['av','ac','ap','an'].forEach(x=>document.getElementById(x).value='');
+  toast('✅ Đã thêm: '+c+' — '+v);
+}
+function bulkAdd(){
+  const lines=document.getElementById('bulk').value.trim().split('\n'); let n=0;
+  lines.forEach(l=>{
+    const p=l.split('|').map(s=>s.trim());
+    if(p.length>=3&&p[0]&&p[1]&&p[2]){
+      const id=Date.now()+n;
+      words.push({id,viet:p[0],cn:p[1],pinyin:p[2]});
+      prog[id]={status:'new',ok:0,err:0}; n++;
+    }
+  });
+  save();updateHeader();document.getElementById('bulk').value='';toast('✅ Nhập '+n+' từ!');
+}
+
+// ── STATS ─────────────────────────────────────────────────
+function renderStats(){
+  const m=Object.values(prog).filter(p=>p.status==='mastered').length;
+  const l=Object.values(prog).filter(p=>p.status==='learning').length;
+  const acc=sess.tot>0?Math.round(sess.ok/sess.tot*100):0;
+  document.getElementById('stTot').textContent=words.length;
+  document.getElementById('stMas').textContent=m;
+  document.getElementById('stLrn').textContent=l;
+  document.getElementById('stStr').textContent=streak;
+  document.getElementById('stSes').textContent=sess.tot;
+  document.getElementById('stAcc').textContent=acc+'%';
+  const g=document.getElementById('hmGrid'); g.innerHTML='';
+  for(let i=29;i>=0;i--){
+    const d=new Date(); d.setDate(d.getDate()-i);
+    const k=d.toISOString().slice(0,10), v=act[k]||0;
+    const lv=v===0?0:v<3?1:v<8?2:3;
+    const el=document.createElement('div'); el.className='hc hc'+lv; el.title=k+': '+v+' lượt'; g.appendChild(el);
+  }
+}
+
+// ── TOAST ─────────────────────────────────────────────────
+function toast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+// ── BOOT ──────────────────────────────────────────────────
+load(); renderDeck(); updateTestScore();
+</script>
+</body>
+</html>
